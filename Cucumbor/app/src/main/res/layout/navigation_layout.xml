@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        android:padding="@dimen/pad_10">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/pad_50"
+                android:layout_height="@dimen/pad_40"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_account_circle_white_24dp" />
+
+            <in.inferon.msl.cucumbor.view.ui.LightTextView
+                android:id="@+id/user_name_tx"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pad_5"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/nav_order_bt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/nav_bt_bg"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_10">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_assignment_turned_in_cp_24dp" />
+
+                <in.inferon.msl.cucumbor.view.ui.LightTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/pad_10"
+                    android:text="@string/orders"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nav_profile_bt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/nav_bt_bg"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_10">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_supervisor_account_cp_24dp" />
+
+                <in.inferon.msl.cucumbor.view.ui.LightTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/pad_10"
+                    android:text="@string/profile"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nav_about_bt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/nav_bt_bg"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_10">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_info_cp_24dp" />
+
+                <in.inferon.msl.cucumbor.view.ui.LightTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/pad_10"
+                    android:text="@string/about"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nav_terms_bt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/nav_bt_bg"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_10">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_speaker_notes_cp_24dp" />
+
+                <in.inferon.msl.cucumbor.view.ui.LightTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/pad_10"
+                    android:text="@string/terms"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nav_logout_bt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/nav_bt_bg"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_10">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_power_settings_new_red_24dp" />
+
+                <in.inferon.msl.cucumbor.view.ui.LightTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/pad_10"
+                    android:text="@string/logout"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_16sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

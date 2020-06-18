@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:context=".view.activity.MainActivity">
+
+    <include layout="@layout/content_main"/>
+
+    <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                android:gravity="center_vertical">
+
+            <RelativeLayout
+                    android:id="@+id/home_toolbar_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <RelativeLayout
+                        android:layout_width="@dimen/pad_50"
+                        android:layout_height="match_parent">
+                    <ImageButton
+                            android:id="@+id/back_ib"
+                            style="?attr/borderlessButtonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ic_keyboard_arrow_left_white_24dp"
+                            android:contentDescription="@string/app_name"
+                            android:visibility="gone"/>
+
+                    <LinearLayout
+                            android:id="@+id/menu_layout"
+                            android:layout_width="@dimen/pad_50"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                        <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                            <View
+                                    android:layout_width="@dimen/pad_5"
+                                    android:layout_height="@dimen/pad_5"
+                                    android:background="@drawable/nav_menu_view_bg"/>
+
+                            <View
+                                    android:layout_width="@dimen/pad_5"
+                                    android:layout_height="@dimen/pad_5"
+                                    android:layout_marginLeft="@dimen/pad_5"
+                                    android:layout_marginStart="@dimen/pad_5"
+                                    android:background="@drawable/nav_menu_view_bg"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/pad_5"
+                                android:orientation="horizontal">
+
+                            <View
+                                    android:layout_width="@dimen/pad_5"
+                                    android:layout_height="@dimen/pad_5"
+                                    android:background="@drawable/nav_menu_view_bg"/>
+
+                            <View
+                                    android:layout_width="@dimen/pad_5"
+                                    android:layout_height="@dimen/pad_5"
+                                    android:layout_marginLeft="@dimen/pad_5"
+                                    android:layout_marginStart="@dimen/pad_5"
+                                    android:background="@drawable/nav_menu_view_bg"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <in.inferon.msl.cucumbor.view.ui.LightTextView
+                        android:id="@+id/toolbar_title_tx"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                        android:text="@string/app_name"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_16sp"
+                        android:textAllCaps="true"/>
+            </RelativeLayout>
+        </RelativeLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

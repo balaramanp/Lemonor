@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/milk_img"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/pad_20"
+                    android:layout_marginLeft="@dimen/pad_10"
+                    android:layout_marginRight="@dimen/pad_10"
+                    android:layout_marginStart="@dimen/pad_10"
+                    android:layout_marginEnd="@dimen/pad_10">
+                <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/upcoming"
+                        android:textSize="@dimen/text_18sp"
+                        android:textColor="@color/colorPrimary"/>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/pad_10">
+                    <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/date"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/black"
+                            android:layout_weight="2"/>
+                    <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/amount"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/black"
+                            android:layout_weight="1"/>
+
+                    <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/modify"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:visibility="invisible"/>
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/upcomingRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/pad_10"/>
+
+                <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/history"
+                        android:textSize="@dimen/text_18sp"
+                        android:textColor="@color/colorPrimary"
+                        android:layout_marginTop="@dimen/pad_20"/>
+
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_1"
+                        android:background="@color/light_gray"
+                        android:layout_marginTop="@dimen/pad_15"/>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                    <View
+                            android:layout_width="@dimen/pad_1"
+                            android:layout_height="match_parent"
+                            android:background="@color/light_gray"/>
+                    <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/date"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/black"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:padding="@dimen/pad_5"/>
+                    <View
+                            android:layout_width="@dimen/pad_1"
+                            android:layout_height="match_parent"
+                            android:background="@color/light_gray"/>
+                    <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/am"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/black"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:padding="@dimen/pad_5"/>
+                    <View
+                            android:layout_width="@dimen/pad_1"
+                            android:layout_height="match_parent"
+                            android:background="@color/light_gray"/>
+                    <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pm"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/black"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:padding="@dimen/pad_5"/>
+                    <View
+                            android:layout_width="@dimen/pad_1"
+                            android:layout_height="match_parent"
+                            android:background="@color/light_gray"/>
+                </LinearLayout>
+
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_1"
+                        android:background="@color/light_gray"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/historyRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/pad_20"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+</RelativeLayout>

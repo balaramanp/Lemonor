@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+    <in.inferon.msl.cucumbor.view.ui.LightTextView
+            android:id="@+id/productNameTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_14sp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:padding="@dimen/pad_5"/>
+    <in.inferon.msl.cucumbor.view.ui.LightTextView
+            android:id="@+id/qtyTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_14sp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:padding="@dimen/pad_5"/>
+    <in.inferon.msl.cucumbor.view.ui.LightTextView
+            android:id="@+id/priceTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_14sp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:padding="@dimen/pad_5"/>
+</LinearLayout>

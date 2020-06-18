@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0386D8</color>
+    <color name="colorPrimaryDark">#045C94</color>
+    <color name="colorPrimaryDark_2">#026bac</color>
+    <color name="colorAccent">#01B1FD</color>
+    <color name="colorSecondary">#BD64FC</color>
+    <color name="colorSecondaryDark">#9750c9</color>
+    <color name="white">#FFFFFF</color>
+    <color name="color_1">#F36523</color>
+    <color name="color_1_dark">#c2501c</color>
+    <color name="color_2">#00A652</color>
+    <color name="color_3">#F06EAA</color>
+    <color name="black">#000000</color>
+    <color name="gray">#B7B7B7</color>
+    <color name="light_gray">#F1F1F1</color>
+    <color name="light_gray_2">#D2D2D2</color>
+    <!--<color name="button_color">#0051AA</color>-->
+    <!--<color name="button_color_dark">#003876</color>-->
+    <color name="button_color">#F36523</color>
+    <color name="button_color_dark">#c2501c</color>
+    <color name="grocery_bt_color">#008000</color>
+    <color name="grocery_bt_color_dark">#005900</color>
+    <color name="milk_bt_color">#786253</color>
+    <color name="milk_bt_color_dark">#604e42</color>
+    <color name="wb_fl_color_1">#5CB3C7</color>
+    <color name="wb_fl_color_2">#BDECFC</color>
+    <color name="wb_sl_color_1">#C19BE4</color>
+    <color name="wb_sl_color_2">#84D9FE</color>
+    <color name="wb_tl_color_1">#0151AA</color>
+    <color name="wb_tl_color_2">#01B1FD</color>
+    <color name="red">#FF0000</color>
+</resources>

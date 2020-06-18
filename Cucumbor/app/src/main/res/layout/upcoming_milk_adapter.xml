@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+              android:layout_marginBottom="@dimen/pad_10">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                android:id="@+id/dateTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/black"
+                android:layout_weight="2"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_marginTop="@dimen/pad_5">
+            <in.inferon.msl.cucumbor.view.ui.LightTextView
+                    android:id="@+id/amountTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_14sp"
+                    android:textColor="@color/black"/>
+
+            <in.inferon.msl.cucumbor.view.ui.LightTextView
+                    android:id="@+id/deliverByTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_14sp"
+                    android:textColor="@color/gray"
+                    android:layout_marginTop="@dimen/pad_5"/>
+        </LinearLayout>
+
+
+        <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                android:id="@+id/modifyTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/modify"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/modify_tv_color"
+                android:background="@drawable/modify_tx_bg"
+                android:paddingLeft="@dimen/pad_20"
+                android:paddingRight="@dimen/pad_20"
+                android:paddingTop="@dimen/pad_5"
+                android:paddingBottom="@dimen/pad_5"
+                android:layout_marginTop="@dimen/pad_5"/>
+    </LinearLayout>
+
+</LinearLayout>

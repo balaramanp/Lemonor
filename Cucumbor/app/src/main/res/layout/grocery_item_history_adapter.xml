@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+              android:padding="@dimen/pad_10">
+    <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="@dimen/pad_60"
+            android:layout_height="@dimen/pad_60"
+            android:src="@drawable/carrot"
+            android:contentDescription="@string/app_name"
+            android:adjustViewBounds="true"/>
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="@dimen/pad_10"
+            android:layout_marginRight="@dimen/pad_10"
+            android:layout_weight="1">
+        <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                android:id="@+id/productNameTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_16sp"
+                android:textColor="@color/grocery_bt_color"/>
+
+        <in.inferon.msl.cucumbor.view.ui.LightTextView
+                android:id="@+id/productPriceTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="@dimen/pad_10"/>
+    </LinearLayout>
+
+    <RelativeLayout
+            android:id="@+id/cancelLayout"
+            android:layout_width="@dimen/pad_80"
+            android:layout_height="match_parent">
+        <in.inferon.msl.cucumbor.view.ui.BoldTextView
+                android:id="@+id/cancelTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/remove"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/red"
+                android:gravity="center_vertical"
+                android:padding="@dimen/pad_5"
+                android:layout_centerInParent="true"/>
+
+        <LinearLayout
+                android:id="@+id/updatingLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_centerInParent="true"
+                android:visibility="gone">
+            <ProgressBar
+                    android:layout_width="@dimen/pad_10"
+                    android:layout_height="@dimen/pad_10"
+                    android:layout_marginRight="@dimen/pad_5"
+                    android:layout_marginEnd="@dimen/pad_5"/>
+            <in.inferon.msl.cucumbor.view.ui.LightTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/updating"
+                    android:textSize="@dimen/text_12sp"
+                    android:textColor="@color/colorAccent"/>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>
