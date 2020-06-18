@@ -87,6 +87,7 @@ class LoadingActivity : AppCompatActivity() {
                             val intent = Intent(this@LoadingActivity, LoginActivity::class.java)
                             startActivity(intent)
                             finish()
+                            Log.e("TAG","Testing")
                         }
                     }
 
