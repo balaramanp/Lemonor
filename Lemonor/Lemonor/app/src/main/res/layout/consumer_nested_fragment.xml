@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <LinearLayout
+                android:id="@+id/dataLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_10">
+            <in.inferon.msl.lemonor.view.ui.BoldTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/featured"
+                    android:textSize="@dimen/text_18sp"
+                    android:textColor="@color/buttonColor"
+                    android:padding="@dimen/pad_10"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/featuredRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            <in.inferon.msl.lemonor.view.ui.BoldTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/near_by_shop"
+                    android:textSize="@dimen/text_18sp"
+                    android:textColor="@color/buttonColor"
+                    android:padding="@dimen/pad_10"
+                    android:layout_marginTop="@dimen/pad_10"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/nearByShopsRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+            android:id="@+id/progressLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingLeft="@dimen/pad_20"
+            android:paddingRight="@dimen/pad_20"
+            android:paddingTop="@dimen/pad_10"
+            android:paddingBottom="@dimen/pad_10"
+            android:background="@drawable/progress_layout_bg"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+        <in.inferon.msl.lemonor.view.ui.LightTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loading"
+                android:textSize="@dimen/text_12sp"
+                android:textColor="@color/colorPrimary"/>
+
+        <ProgressBar
+                android:layout_width="@dimen/pad_15"
+                android:layout_height="@dimen/pad_15"
+                android:indeterminateTint="@color/colorPrimary"
+                android:indeterminateTintMode="src_in"
+                android:layout_marginLeft="@dimen/pad_10"
+                android:layout_marginStart="@dimen/pad_10"/>
+    </LinearLayout>
+</RelativeLayout>

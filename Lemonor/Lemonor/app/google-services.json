@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "240858228994",
+    "firebase_url": "https://lemonor-in.firebaseio.com",
+    "project_id": "lemonor-in",
+    "storage_bucket": "lemonor-in.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:240858228994:android:7b01baac176242a3a03a1b",
+        "android_client_info": {
+          "package_name": "in.inferon.msl.lemonor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "240858228994-ao764g1euq1prd58l7f5t351v6618k0l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.inferon.msl.lemonor",
+            "certificate_hash": "67559efc13a951224b5b382ba30a19f8ca7e8de3"
+          }
+        },
+        {
+          "client_id": "240858228994-v8vjc2qcessts3hv21jm2to5h4q8d9lj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.inferon.msl.lemonor",
+            "certificate_hash": "8dc34746ad4e1c99bca761e9f8f3ca89f1b1fcd2"
+          }
+        },
+        {
+          "client_id": "240858228994-ptsf1nlt7t45oogr0bsierh1euhb4h3p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-z_BV6ykW7VV6Cg00p4V-srRRSX8VyvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "240858228994-ptsf1nlt7t45oogr0bsierh1euhb4h3p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

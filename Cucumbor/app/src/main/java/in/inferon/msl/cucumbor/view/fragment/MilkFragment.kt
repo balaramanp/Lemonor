@@ -63,7 +63,7 @@ class MilkFragment : Fragment() {
         sobj.put("user_id", shared!!.getString("id", ""))
         repo!!.getMilkSalesList(sobj.toString())
 
-        repo!!.getUpcomingMilkList.observe(this, androidx.lifecycle.Observer {
+        /*repo!!.getUpcomingMilkList.observe(this, androidx.lifecycle.Observer {
             run {
                 if (it.isNotEmpty()) {
                     progressBar.visibility = View.VISIBLE
@@ -80,7 +80,7 @@ class MilkFragment : Fragment() {
                     Log.e(TAG, "Get Upcoming Milk List Response is Empty")
                 }
             }
-        })
+        })*/
 
         repo!!.getMilkSalesList.observe(this, androidx.lifecycle.Observer {
             run {
