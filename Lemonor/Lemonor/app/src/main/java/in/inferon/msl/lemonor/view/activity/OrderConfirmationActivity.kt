@@ -1,0 +1,493 @@
+package `in`.inferon.msl.lemonor.view.activity
+
+import `in`.inferon.msl.lemonor.R
+import `in`.inferon.msl.lemonor.model.pojo.Address
+import `in`.inferon.msl.lemonor.model.pojo.Products
+import `in`.inferon.msl.lemonor.repo.Repository
+import `in`.inferon.msl.lemonor.view.adapter.ConfirmOrdersItemAdapter
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Dialog
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
+import android.net.Uri
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.Window
+import android.widget.*
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.razorpay.Checkout
+import com.razorpay.PaymentResultListener
+import kotlinx.android.synthetic.main.activity_order_confirmation.*
+import kotlinx.android.synthetic.main.activity_order_confirmation.backIB
+import kotlinx.android.synthetic.main.activity_order_confirmation.progressLayout
+import kotlinx.android.synthetic.main.activity_order_confirmation.recyclerView
+import kotlinx.android.synthetic.main.activity_order_confirmation.titleTV
+import org.json.JSONArray
+import org.json.JSONObject
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.*
+
+class OrderConfirmationActivity : AppCompatActivity(), View.OnClickListener, PaymentResultListener {
+
+    private val TAG = OrderConfirmationActivity::class.java.simpleName
+    private var supplierID = ""
+    private var shopName = ""
+    private var o2 = ""
+    private var products = ""
+    private var selectedAddressID = ""
+    private var productsList = mutableListOf<Products>()
+    private val confirmArray = JSONArray()
+    private val confirmList = mutableListOf<Products>()
+    private var itemCount = 0
+    private var total = 0f
+    private val PREF = "Pref"
+    private var shared: SharedPreferences? = null
+    private var repo: Repository? = null
+    private val UPI_PAYMENT = 0
+    private var buttonLayout: LinearLayout? = null
+    private var loadingLayout: LinearLayout? = null
+    private lateinit var address: Address
+    private lateinit var dialog: Dialog
+    private var transactionRefID: String = ""
+
+    @SuppressLint("SetTextI18n")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_order_confirmation)
+
+        repo = Repository()
+        shared = getSharedPreferences(PREF, MODE_PRIVATE)
+
+
+        var randString = ""
+        for (i in 0..11) {
+            randString += (0..10).random()
+        }
+        transactionRefID = shared!!.getString("mobile_number", "") +
+                shared!!.getString("user_name", "") + randString
+        Log.e(TAG, "Generated Transaction Ref ID : $transactionRefID")
+
+        supplierID = intent.getStringExtra("supplier_id")!!
+        shopName = intent.getStringExtra("shop_name")!!
+        o2 = intent.getStringExtra("o2")!!
+        selectedAddressID = intent.getStringExtra("selectedAddressID")!!
+        products = intent.getStringExtra("productsList")!!
+        productsList = Gson().fromJson(products, object : TypeToken<MutableList<Products>>() {}.type)
+
+        if (selectedAddressID != "") {
+            address = Gson().fromJson(
+                intent.getStringExtra("selectedAddress"),
+                object : TypeToken<Address>() {}.type
+            )
+        }
+
+        if (o2.length >= 3) {
+            val obj = JSONObject()
+            obj.put("product_id", shared!!.getString("o2_id", ""))
+            obj.put("product_name", shared!!.getString("o2_name", ""))
+            obj.put("qty", "0")
+            obj.put("unit", "o2")
+            obj.put("rate", "0")
+            obj.put("description", o2)
+            obj.put("is_o2_image_exists", "false")
+            obj.put("chat", "")
+            obj.put("local_name", "")
+            confirmArray.put(obj)
+            itemCount += 1
+        }
+        for (i in productsList) {
+            Log.e(TAG, "Qty : ${i.qty}")
+            if (i.qty != null && i.qty.toInt() > 0) {
+                val obj = JSONObject()
+                obj.put("product_id", i.product_id)
+                obj.put("product_name", i.name)
+                obj.put("local_name", i.local_name)
+                obj.put("qty", i.qty)
+                obj.put("unit", i.unit)
+                obj.put("rate", i.rate)
+                if (i.chat == null || i.chat.length == 0) {
+                    obj.put("chat", "")
+                } else {
+                    obj.put("chat", i.chat)
+                }
+                confirmArray.put(obj)
+                confirmList.add(i)
+
+                total += i.qty.toInt() * i.rate.toFloat()
+                itemCount += 1
+            }
+        }
+
+        titleTV.text = shopName
+        if (o2.length >= 3) {
+            o2DescriptionTV.text = o2
+        } else {
+            o2DescriptionTV.visibility = View.GONE
+        }
+        itemCountTV.text = itemCount.toString()
+        if (itemCount > 1) {
+            itemTV.text = "Items"
+        } else {
+            itemTV.text = "Item"
+        }
+        totalTV.text = getString(R.string.Rs) + " " + doubleToStringNoDecimal(total.toDouble())
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val confirmOrdersItemAdapter = ConfirmOrdersItemAdapter(this, confirmList)
+        recyclerView.adapter = confirmOrdersItemAdapter
+        recyclerView.isNestedScrollingEnabled = false
+        recyclerView.setHasFixedSize(true)
+
+        repo!!.placeAnOrder.observe(this, androidx.lifecycle.Observer {
+            run {
+                val jsonObject = JSONObject(it)
+                if (jsonObject.getString("status") == "ok") {
+                    Toast.makeText(this, "Your Order Placed Successfully!", Toast.LENGTH_SHORT).show()
+                    orderPlacedSuccessfully()
+                    if (selectedAddressID != "") {
+                        val intent = Intent(this, OrderSummaryActivity::class.java)
+                        intent.putExtra("address", Gson().toJson(address))
+                        intent.putExtra("products", products)
+                        intent.putExtra("o2", o2)
+                        intent.putExtra("shop_name", shopName)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        finish()
+                    }
+                } else if (jsonObject.getString("status") == "error") {
+                    Toast.makeText(this, jsonObject.getString("msg"), Toast.LENGTH_SHORT).show()
+                    progressLayout.visibility = View.GONE
+                }
+            }
+        })
+
+        backIB.setOnClickListener(this)
+        cancelBT.setOnClickListener(this)
+        okBT.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v!!.id) {
+            R.id.backIB -> {
+                super.onBackPressed()
+            }
+            R.id.cancelBT -> {
+                super.onBackPressed()
+            }
+            R.id.okBT -> {
+                Log.e(TAG, "OK Button Clicked")
+                val connectivityManager =
+                    getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+                val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
+                val isConnected: Boolean = activeNetwork?.isConnected == true
+                if (!isConnected) {
+                    Toast.makeText(this, "No Internet Connection!", Toast.LENGTH_SHORT).show()
+                } else {
+                    if (selectedAddressID == "") {
+                        progressLayout!!.visibility = View.VISIBLE
+                        val fObj = JSONObject()
+                        fObj.put("user_id", shared!!.getString("id", ""))
+                        fObj.put("supplier_id", supplierID)
+                        fObj.put("order_list", confirmArray)
+                        fObj.put("payment_type", "CASH")
+                        fObj.put("transaction_id", "")
+                        fObj.put("reference_id", "")
+                        fObj.put("address_id", "")
+                        repo!!.placeAnOrder(fObj.toString())
+
+                        okBT.isClickable = false
+                    } else {
+                        /*var selectedPaymentType = ""
+
+                        dialog = Dialog(this)
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                        dialog.setContentView(R.layout.select_payment_dialog)
+
+                        val upiRB = dialog.findViewById(R.id.upiRB) as RadioButton
+                        val netBankingRB = dialog.findViewById(R.id.netBankingRB) as RadioButton
+                        val cashOnDeliveryRB = dialog.findViewById(R.id.cashOnDeliveryRB) as RadioButton
+                        val cancelBT = dialog.findViewById(R.id.cancelBT) as Button
+                        val proceedBT = dialog.findViewById(R.id.proceedBT) as Button
+                        buttonLayout = dialog.findViewById(R.id.buttonLayout) as LinearLayout
+                        loadingLayout = dialog.findViewById(R.id.loadingLayout) as LinearLayout
+
+                        cancelBT.setOnClickListener {
+                            dialog.dismiss()
+                        }
+
+                        proceedBT.setOnClickListener {
+                            if (upiRB.isChecked) {
+                                selectedPaymentType = "UPI"
+                            } else if (cashOnDeliveryRB.isChecked) {
+                                selectedPaymentType = "Cash On Delivery"
+                            } else if (netBankingRB.isChecked) {
+                                selectedPaymentType = "Net Banking"
+                            }
+
+                            if (selectedPaymentType != "") {
+                                if (selectedPaymentType == "UPI") {
+                                    buttonLayout!!.visibility = View.GONE
+                                    loadingLayout!!.visibility = View.VISIBLE
+
+                                    val uri = Uri.parse("upi://pay").buildUpon()
+                                        .appendQueryParameter("pa", "9566433559@ybl")
+                                        .appendQueryParameter("pn", "Praveen kumar")
+                                        .appendQueryParameter("tn", "Testing")
+                                        .appendQueryParameter("am", "1.00")
+                                        .appendQueryParameter("cu", "INR")
+                                        .appendQueryParameter("tr", transactionRefID)
+                                        .appendQueryParameter(
+                                            "url",
+                                            Uri.parse("http://glancer.in/prototypes/flico/d117/projects_main/lemonor/dev_ops/online_payment_callback.php").path
+                                        )
+                                        .build()
+
+
+                                    val upiPayIntent = Intent(Intent.ACTION_VIEW)
+                                    upiPayIntent.data = uri
+
+                                    // will always show a dialog to user to choose an app
+                                    val chooser = Intent.createChooser(upiPayIntent, "Pay with")
+
+                                    // check if intent resolves
+                                    if (null != chooser.resolveActivity(packageManager)) {
+                                        startActivityForResult(chooser, UPI_PAYMENT)
+                                    } else {
+                                        Toast.makeText(
+                                            this,
+                                            "No UPI app found, please install one to continue",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                } else if (selectedPaymentType == "Net Banking") {
+                                    startPayment()
+                                } else if (selectedPaymentType == "Cash On Delivery") {
+                                    progressLayout!!.visibility = View.VISIBLE
+                                    val fObj = JSONObject()
+                                    fObj.put("user_id", shared!!.getString("id", ""))
+                                    fObj.put("supplier_id", supplierID)
+                                    fObj.put("order_list", confirmArray)
+                                    fObj.put("payment_type", "CASH")
+                                    fObj.put("transaction_id", "")
+                                    fObj.put("reference_id", "")
+                                    repo!!.placeAnOrder(fObj.toString())
+
+                                    okBT.isClickable = false
+                                    dialog.dismiss()
+                                }
+                            } else {
+                                Toast.makeText(this, "Please Select Payment Type!", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                        dialog.setCanceledOnTouchOutside(false)
+                        dialog.show()
+                        val window = dialog.window!!
+                        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)*/
+
+
+                        progressLayout!!.visibility = View.VISIBLE
+                        val fObj = JSONObject()
+                        fObj.put("user_id", shared!!.getString("id", ""))
+                        fObj.put("supplier_id", supplierID)
+                        fObj.put("order_list", confirmArray)
+                        fObj.put("payment_type", "CASH")
+                        fObj.put("transaction_id", "")
+                        fObj.put("reference_id", "")
+                        fObj.put("address_id", selectedAddressID)
+                        repo!!.placeAnOrder(fObj.toString())
+
+                        okBT.isClickable = false
+                    }
+                }
+            }
+        }
+    }
+
+    private fun orderPlacedSuccessfully() {
+        val intent = Intent("OrderPlacedSuccessfully")
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+    }
+
+    private fun doubleToStringNoDecimal(d: Double): String? {
+        val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
+        formatter.applyPattern("#,##,###.##")
+        return formatter.format(d)
+    }
+
+
+    //UPI Payment
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            UPI_PAYMENT -> if (Activity.RESULT_OK == resultCode || resultCode == 11) {
+                if (data != null) {
+                    val trxt = data.getStringExtra("response")
+                    Log.e("UPI", "onActivityResult: $trxt")
+                    val dataList = ArrayList<String>()
+                    dataList.add(trxt)
+                    upiPaymentDataOperation(dataList)
+                } else {
+                    Log.e("UPI", "onActivityResult: " + "Return data is null")
+                    val dataList = ArrayList<String>()
+                    dataList.add("nothing")
+                    upiPaymentDataOperation(dataList)
+                }
+            } else {
+                Log.d("UPI", "onActivityResult: " + "Return data is null") //when user simply back without payment
+                val dataList = ArrayList<String>()
+                dataList.add("nothing")
+                upiPaymentDataOperation(dataList)
+            }
+        }
+    }
+
+
+    private fun upiPaymentDataOperation(data: ArrayList<String>) {
+        if (isConnectionAvailable(this)) {
+            var str: String? = data.toString()
+            Log.e("UPIPAY", "upiPaymentDataOperation: " + str!!)
+            var paymentCancel = ""
+            if (str == null) str = "discard"
+            var status = ""
+            var approvalRefNo = ""
+            val response = str.split("&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            for (i in response.indices) {
+                val equalStr = response[i].split("=".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                if (equalStr.size >= 2) {
+                    if (equalStr[0].toLowerCase() == "Status".toLowerCase()) {
+                        status = equalStr[1].toLowerCase()
+                    } else if (equalStr[0].toLowerCase() == "ApprovalRefNo".toLowerCase() || equalStr[0].toLowerCase() == "txnRef".toLowerCase()) {
+                        approvalRefNo = equalStr[1]
+                    }
+                } else {
+                    paymentCancel = "Payment cancelled by user."
+                }
+            }
+
+            if (status == "success") {
+                //Code to handle successful transaction here.
+                Toast.makeText(this, "Transaction successful.", Toast.LENGTH_SHORT).show()
+                Log.e("UPI", "responseStr: $approvalRefNo")
+
+                progressLayout!!.visibility = View.VISIBLE
+                val fObj = JSONObject()
+                fObj.put("user_id", shared!!.getString("id", ""))
+                fObj.put("supplier_id", supplierID)
+                fObj.put("order_list", confirmArray)
+                fObj.put("payment_type", "UPI")
+                fObj.put("transaction_id", approvalRefNo)
+                fObj.put("reference_id", transactionRefID)
+                repo!!.placeAnOrder(fObj.toString())
+
+                okBT.isClickable = false
+//                dialog.dismiss()
+
+            } else if ("Payment cancelled by user." == paymentCancel) {
+                buttonLayout!!.visibility = View.VISIBLE
+                loadingLayout!!.visibility = View.GONE
+                Toast.makeText(this, "Payment cancelled.", Toast.LENGTH_SHORT).show()
+            } else {
+                buttonLayout!!.visibility = View.VISIBLE
+                loadingLayout!!.visibility = View.GONE
+                Toast.makeText(this, "Transaction failed.Please try again", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "Internet connection is not available. Please check and try again", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+
+    companion object {
+
+        fun isConnectionAvailable(context: Context): Boolean {
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (connectivityManager != null) {
+                val netInfo = connectivityManager.activeNetworkInfo
+                if (netInfo != null && netInfo.isConnected
+                    && netInfo.isConnectedOrConnecting
+                    && netInfo.isAvailable
+                ) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
+
+    //Razor Payment
+    private fun startPayment() {
+        /*
+        *  You need to pass current activity in order to let Razorpay create CheckoutActivity
+        * */
+        val activity: Activity = this
+        val co = Checkout()
+
+        try {
+            val options = JSONObject()
+            options.put("name", "Lemonor")
+            options.put("description", "Demoing Charges")
+            //You can omit the image option to fetch the image from dashboard
+            options.put("image", R.drawable.logo)
+            options.put("currency", "INR")
+            options.put("amount", "100")
+
+            val prefill = JSONObject()
+            prefill.put("email", "test@razorpay.com")
+            prefill.put("contact", "9876543210")
+
+            options.put("prefill", prefill)
+            co.open(activity, options)
+        } catch (e: Exception) {
+            Toast.makeText(activity, "Error in payment: " + e.message, Toast.LENGTH_LONG).show()
+            e.printStackTrace()
+        }
+    }
+
+
+    override fun onPaymentError(errorCode: Int, response: String?) {
+        try {
+            Toast.makeText(this, "Payment failed $errorCode \n $response", Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception in onPaymentSuccess", e)
+        }
+    }
+
+    override fun onPaymentSuccess(razorpayPaymentId: String?) {
+        try {
+            Toast.makeText(this, "Payment Successful $razorpayPaymentId", Toast.LENGTH_LONG).show()
+
+            progressLayout!!.visibility = View.VISIBLE
+            val fObj = JSONObject()
+            fObj.put("user_id", shared!!.getString("id", ""))
+            fObj.put("supplier_id", supplierID)
+            fObj.put("order_list", confirmArray)
+            fObj.put("payment_type", "UPI")
+            fObj.put("transaction_id", razorpayPaymentId)
+            fObj.put("reference_id", transactionRefID)
+            repo!!.placeAnOrder(fObj.toString())
+
+            okBT.isClickable = false
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception in onPaymentSuccess", e)
+        }
+    }
+}

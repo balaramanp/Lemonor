@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".view.activity.ProductSelectionActivity">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:orientation="horizontal"
+            android:background="@color/colorPrimary">
+        <ImageButton
+                android:id="@+id/backIB"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="@dimen/pad_50"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_keyboard_arrow_left_white_24dp"
+                android:contentDescription="@string/app_name"
+                android:adjustViewBounds="true"/>
+
+        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/about_us"
+                android:textSize="@dimen/text_16sp"
+                android:textColor="@color/white"
+                android:gravity="center_vertical"
+                android:layout_weight="1"/>
+
+        <ImageButton
+                android:id="@+id/shareIB"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="@dimen/pad_50"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_share_white_24dp"
+                android:contentDescription="@string/app_name"
+                android:adjustViewBounds="true"
+                android:visibility="gone"/>
+    </LinearLayout>
+
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+        <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none">
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/pad_10">
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/englishAboutUsTv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/fontColor"/>
+
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/tamilAboutUsTv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/fontColor"
+                        android:layout_marginTop="@dimen/pad_20"/>
+
+                <in.inferon.msl.lemonor.view.ui.LightButton
+                        android:id="@+id/shareBT"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/share"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/fontColor"
+                        android:layout_gravity="center_horizontal"
+                        android:drawableLeft="@drawable/ic_share_cp_24dp"
+                        android:drawableStart="@drawable/ic_share_cp_24dp"
+                        android:drawablePadding="@dimen/pad_10"
+                        android:layout_marginTop="@dimen/pad_30"
+                        android:visibility="gone"/>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <LinearLayout
+                android:id="@+id/progressLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingLeft="@dimen/pad_20"
+                android:paddingRight="@dimen/pad_20"
+                android:paddingTop="@dimen/pad_10"
+                android:paddingBottom="@dimen/pad_10"
+                android:background="@drawable/progress_layout_bg"
+                android:layout_centerInParent="true"
+                android:visibility="gone">
+            <in.inferon.msl.lemonor.view.ui.LightTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading"
+                    android:textSize="@dimen/text_12sp"
+                    android:textColor="@color/colorPrimary"/>
+
+            <ProgressBar
+                    android:layout_width="@dimen/pad_15"
+                    android:layout_height="@dimen/pad_15"
+                    android:indeterminateTint="@color/colorPrimary"
+                    android:indeterminateTintMode="src_in"
+                    android:layout_marginLeft="@dimen/pad_10"
+                    android:layout_marginStart="@dimen/pad_10"/>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

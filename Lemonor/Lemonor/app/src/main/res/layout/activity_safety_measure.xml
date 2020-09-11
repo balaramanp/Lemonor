@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".view.activity.SafetyMeasureActivity">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:orientation="horizontal"
+            android:background="@color/colorPrimary">
+        <ImageButton
+                android:id="@+id/backIB"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="@dimen/pad_50"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_keyboard_arrow_left_white_24dp"
+                android:contentDescription="@string/app_name"
+                android:adjustViewBounds="true"/>
+
+        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/text_16sp"
+                android:text="@string/lemonor_safety_measures"
+                android:textColor="@color/white"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_weight="1"/>
+    </LinearLayout>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/pad_10"
+                        android:layout_marginTop="@dimen/pad_20"
+                        android:layout_marginBottom="@dimen/pad_30">
+                    <in.inferon.msl.lemonor.view.ui.LightButton
+                            android:id="@+id/backBT"
+                            style="?attr/borderlessButtonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/pad_40"
+                            android:text="@string/back"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/reject_bt_color"
+                            android:textAllCaps="false"
+                            android:background="@drawable/reject_bt_bg"
+                            android:layout_weight="1"
+                            android:layout_marginRight="@dimen/pad_5"
+                            android:layout_marginEnd="@dimen/pad_5"/>
+
+                    <in.inferon.msl.lemonor.view.ui.LightButton
+                            android:id="@+id/helpDeskBT"
+                            style="?attr/borderlessButtonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/pad_40"
+                            android:text="@string/help_desk"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/white"
+                            android:textAllCaps="false"
+                            android:background="@drawable/button_bg"
+                            android:layout_weight="1"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <LinearLayout
+                android:id="@+id/progressLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingLeft="@dimen/pad_20"
+                android:paddingRight="@dimen/pad_20"
+                android:paddingTop="@dimen/pad_10"
+                android:paddingBottom="@dimen/pad_10"
+                android:background="@drawable/progress_layout_bg"
+                android:layout_centerInParent="true"
+                android:visibility="gone">
+            <in.inferon.msl.lemonor.view.ui.LightTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading"
+                    android:textSize="@dimen/text_12sp"
+                    android:textColor="@color/colorPrimary"/>
+
+            <ProgressBar
+                    android:layout_width="@dimen/pad_15"
+                    android:layout_height="@dimen/pad_15"
+                    android:indeterminateTint="@color/colorPrimary"
+                    android:indeterminateTintMode="src_in"
+                    android:layout_marginLeft="@dimen/pad_10"
+                    android:layout_marginStart="@dimen/pad_10"/>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

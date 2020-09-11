@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/pad_10"
+        android:layout_margin="@dimen/pad_10">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/rate_us"
+                android:textSize="@dimen/text_18sp"
+                android:textColor="@color/white"
+                android:background="@color/colorPrimary"
+                android:padding="@dimen/pad_10"
+                android:gravity="center"/>
+
+        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/store_rating"
+                android:textSize="@dimen/text_18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/pad_10"/>
+
+        <androidx.appcompat.widget.AppCompatRatingBar
+                android:id="@+id/storeRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/pad_10"/>
+
+        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/product_rating"
+                android:textSize="@dimen/text_18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/pad_20"/>
+
+        <androidx.appcompat.widget.AppCompatRatingBar
+                android:id="@+id/productRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/pad_10"/>
+
+        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/delivery_boy_rating"
+                android:textSize="@dimen/text_18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/pad_20"/>
+
+        <androidx.appcompat.widget.AppCompatRatingBar
+                android:id="@+id/deliveryBoyRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/pad_10"/>
+
+
+        <in.inferon.msl.lemonor.view.ui.LightEditText
+                android:id="@+id/ratingCommentET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/black"
+                android:hint="@string/comment"
+                android:textColorHint="@color/gray"
+                android:background="@drawable/main_edit_tx_bg"
+                android:padding="@dimen/pad_10"
+                android:layout_margin="@dimen/pad_10"
+                android:inputType="textMultiLine"
+                android:imeOptions="actionDone"/>
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <LinearLayout
+                    android:id="@+id/loadingLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_centerInParent="true"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/pad_20"
+                    android:visibility="gone">
+                <ProgressBar
+                        android:layout_width="@dimen/pad_15"
+                        android:layout_height="@dimen/pad_15"/>
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/loading"
+                        android:textSize="@dimen/text_12sp"
+                        android:textColor="@color/fontColor"
+                        android:layout_marginLeft="@dimen/pad_10"
+                        android:layout_marginStart="@dimen/pad_10"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:id="@+id/buttonLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/pad_10">
+                <in.inferon.msl.lemonor.view.ui.LightButton
+                        android:id="@+id/diaCancelBT"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cancel"
+                        android:textSize="@dimen/text_16sp"
+                        android:textColor="@color/cancel_bt_color"
+                        android:background="@drawable/cancel_bt_bg"
+                        android:layout_weight="1"
+                        android:layout_marginRight="@dimen/pad_5"
+                        android:layout_marginEnd="@dimen/pad_5"/>
+
+                <in.inferon.msl.lemonor.view.ui.LightButton
+                        android:id="@+id/diaOKBT"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ok"
+                        android:textSize="@dimen/text_16sp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/ok_bt_bg"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="@dimen/pad_5"
+                        android:layout_marginStart="@dimen/pad_5"/>
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

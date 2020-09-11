@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        app:cardCornerRadius="@dimen/pad_5"
+        android:layout_margin="@dimen/pad_5">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/pad_10">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+                <in.inferon.msl.lemonor.view.ui.BoldTextView
+                        android:id="@+id/productNameTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/black"
+                        android:maxLines="1"
+                        android:ellipsize="end"/>
+
+                <in.inferon.msl.lemonor.view.ui.BoldTextView
+                        android:id="@+id/productAliasNameTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/black"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:layout_marginTop="@dimen/pad_10"/>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/pad_10">
+                    <in.inferon.msl.lemonor.view.ui.BoldTextView
+                            android:id="@+id/priceTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/black"/>
+
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/slash"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/black"
+                            android:layout_marginLeft="@dimen/pad_5"
+                            android:layout_marginRight="@dimen/pad_5"/>
+
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:id="@+id/unitTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/black"/>
+
+                </LinearLayout>
+
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/descriptionTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/black"
+                        android:layout_marginTop="@dimen/pad_10"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

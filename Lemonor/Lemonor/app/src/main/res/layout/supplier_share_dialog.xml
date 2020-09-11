@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pad_10"
+        app:cardCornerRadius="@dimen/pad_10">
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/pad_20">
+
+        <in.inferon.msl.lemonor.view.ui.LightButton
+                android:id="@+id/shareTamilBT"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tamil"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/white"
+                android:textAllCaps="false"
+                android:drawableLeft="@drawable/ic_share_white_24dp"
+                android:drawableStart="@drawable/ic_share_white_24dp"
+                android:drawablePadding="@dimen/pad_10"
+                android:paddingLeft="@dimen/pad_30"
+                android:paddingRight="@dimen/pad_30"
+                android:background="@drawable/button_bg"/>
+
+        <in.inferon.msl.lemonor.view.ui.LightButton
+                android:id="@+id/shareEnglishBT"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/english"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/white"
+                android:textAllCaps="false"
+                android:drawableLeft="@drawable/ic_share_white_24dp"
+                android:drawableStart="@drawable/ic_share_white_24dp"
+                android:drawablePadding="@dimen/pad_10"
+                android:paddingLeft="@dimen/pad_25"
+                android:paddingRight="@dimen/pad_25"
+                android:background="@drawable/button_bg"
+                android:layout_marginTop="@dimen/pad_20"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

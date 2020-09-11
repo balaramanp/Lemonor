@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pad_10"
+        app:cardCornerRadius="@dimen/pad_10">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/seller_enrollment"
+                android:textSize="@dimen/text_16sp"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:background="@color/colorPrimary"
+                android:padding="@dimen/pad_10"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/pad_20"
+                android:paddingRight="@dimen/pad_20"
+                android:paddingTop="@dimen/pad_20"
+                android:paddingBottom="@dimen/pad_10">
+            <in.inferon.msl.lemonor.view.ui.LightTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/you_are_going_to_enable_yourself_as_a_seller_now"
+                    android:textSize="@dimen/text_16sp"
+                    android:textColor="@color/black"
+                    android:lineSpacingExtra="@dimen/pad_3"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end">
+                <in.inferon.msl.lemonor.view.ui.BoldButton
+                        android:id="@+id/cancelBT"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cancel"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/gray"
+                        android:textAllCaps="false"/>
+
+                <in.inferon.msl.lemonor.view.ui.BoldButton
+                        android:id="@+id/okBT"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ok"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/colorPrimary"
+                        android:textAllCaps="false"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

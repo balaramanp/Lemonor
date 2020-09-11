@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pad_10"
+        app:cardCornerRadius="@dimen/pad_10">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/pad_20"
+                android:paddingRight="@dimen/pad_20"
+                android:paddingTop="@dimen/pad_20"
+                android:paddingBottom="@dimen/pad_10">
+            <in.inferon.msl.lemonor.view.ui.LightTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unsaved_item_txt"
+                    android:textSize="@dimen/text_16sp"
+                    android:textColor="@color/black"
+                    android:lineSpacingExtra="@dimen/pad_3"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end"
+                    android:layout_marginTop="@dimen/pad_20">
+                <in.inferon.msl.lemonor.view.ui.BoldButton
+                        android:id="@+id/cancelBT"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cancel"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/gray_save_bt_color"
+                        android:textAllCaps="false"
+                        android:background="@drawable/light_gray_bt_bg"/>
+
+                <in.inferon.msl.lemonor.view.ui.BoldButton
+                        android:id="@+id/discardBT"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/discard"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/reject_bt_color"
+                        android:textAllCaps="false"
+                        android:background="@drawable/reject_bt_bg"
+                        android:layout_marginLeft="@dimen/pad_10"
+                        android:layout_marginRight="@dimen/pad_10"/>
+
+                <in.inferon.msl.lemonor.view.ui.BoldButton
+                        android:id="@+id/saveBT"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/save"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/white"
+                        android:textAllCaps="false"
+                        android:background="@drawable/button_bg"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

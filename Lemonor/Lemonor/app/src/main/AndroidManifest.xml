@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="in.inferon.msl.lemonor">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <application
+            android:name=".model.App"
+            android:allowBackup="true"
+            android:icon="@drawable/applogo"
+            android:label="@string/app_name"
+            android:roundIcon="@drawable/applogo"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme"
+            android:usesCleartextTraffic="true">
+        <activity android:name=".view.activity.OrderSummaryActivity">
+        </activity>
+        <activity
+                android:name=".view.activity.AddAddressActivity"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity
+                android:name=".view.activity.EditAddressActivity"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity
+                android:name=".view.activity.SafetyMeasureActivity"
+                android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+                android:name=".view.activity.SearchUpdatePriceActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/Theme.CustomDialog">
+        </activity>
+        <activity
+                android:name=".view.activity.UpdateProductSearchActivity"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity
+                android:name=".view.activity.OrderModificationActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.UpdateProductActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.OrderConfirmationActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.ForceUpdateActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.AboutUsActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.NoInternetActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.SupplierInfoActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.OrderInfoActivity"
+                android:screenOrientation="portrait">
+        </activity>
+
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="in.inferon.msl.lemonor.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_paths"/>
+        </provider>
+
+        <activity
+                android:name=".view.activity.SupplierOrderHistoryActivity"
+                android:screenOrientation="portrait">
+        </activity>
+
+        <service
+                android:name=".model.FireBaseService"
+                android:enabled="true"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_channel_id"
+                android:value="@string/default_notification_channel_id"/>
+
+        <activity
+                android:name=".view.activity.MyOrdersActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.ViewSupplierProductActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.PlaceOrderActivity"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity
+                android:name=".view.activity.ProductSelectionActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="@string/google_maps_key"/>
+
+        <activity
+                android:name=".view.activity.ShopMarkerMapActivity"
+                android:label="@string/title_activity_shop_marker_map"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.RegisterSupplierActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.SupportActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.UpdateProfileActivity"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity
+                android:name=".view.activity.MainFragmentActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.LoginActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <!-- Branch URI scheme -->
+            <intent-filter>
+                <data
+                        android:host="open"
+                        android:scheme="lemonor"/>
+
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+            </intent-filter>
+
+            <!-- Branch App Links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                        android:host="lemonor.app.link"
+                        android:scheme="https"/>
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".view.activity.EditSupplierActivity"
+                android:screenOrientation="portrait"/>
+        <activity
+                android:name=".view.activity.AddressMarkerMapActivity"
+                android:screenOrientation="portrait"/>
+        <activity
+                android:name=".view.activity.AddressChangeMapActivity"
+                android:screenOrientation="portrait"/> <!-- Branch init -->
+        <meta-data
+                android:name="io.branch.sdk.BranchKey"
+                android:value="key_live_enISWMaObB3GaBPUjaSQTlelvDcDRdbA"/> <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->
+        <meta-data
+                android:name="io.branch.sdk.BranchKey.test"
+                android:value="key_test_bbTH9JpPkr6TesUMdnKLMffcFBlvSmdj"/>
+        <meta-data
+                android:name="io.branch.sdk.TestMode"
+                android:value="false"/>
+        <meta-data
+                android:name="com.razorpay.ApiKey"
+                android:value="rzp_test_RYT6LI92CIjnHM"/>
+    </application>
+
+</manifest>

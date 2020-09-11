@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+        <WebView
+                android:id="@+id/webView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"/>
+
+        <LinearLayout
+                android:id="@+id/progressLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingLeft="@dimen/pad_20"
+                android:paddingRight="@dimen/pad_20"
+                android:paddingTop="@dimen/pad_10"
+                android:paddingBottom="@dimen/pad_10"
+                android:background="@drawable/progress_layout_bg"
+                android:layout_centerInParent="true"
+                android:visibility="gone">
+            <in.inferon.msl.lemonor.view.ui.LightTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading"
+                    android:textSize="@dimen/text_12sp"
+                    android:textColor="@color/colorPrimary"/>
+
+            <ProgressBar
+                    android:layout_width="@dimen/pad_15"
+                    android:layout_height="@dimen/pad_15"
+                    android:indeterminateTint="@color/colorPrimary"
+                    android:indeterminateTintMode="src_in"
+                    android:layout_marginLeft="@dimen/pad_10"
+                    android:layout_marginStart="@dimen/pad_10"/>
+        </LinearLayout>
+
+        <ImageButton
+                android:id="@+id/backIB"
+                android:layout_width="@dimen/pad_30"
+                android:layout_height="@dimen/pad_30"
+                android:src="@drawable/ic_keyboard_arrow_left_white_24dp"
+                android:contentDescription="@string/app_name"
+                android:adjustViewBounds="true"
+                android:background="@drawable/trans_ib_bg"
+                android:layout_margin="@dimen/pad_10"/>
+    </RelativeLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <in.inferon.msl.lemonor.view.ui.LightButton
+                android:id="@+id/worldBT"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/global"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/white"
+                android:background="@drawable/web_bt_bg"
+                android:textAllCaps="false"
+                android:layout_weight="1"/>
+
+        <in.inferon.msl.lemonor.view.ui.LightButton
+                android:id="@+id/worldOMeterBT"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/worldometer"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/white"
+                android:background="@drawable/web_bt_bg"
+                android:textAllCaps="false"
+                android:layout_weight="1"/>
+
+        <in.inferon.msl.lemonor.view.ui.LightButton
+                android:id="@+id/indiaBT"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/google"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/white"
+                android:background="@drawable/web_bt_bg"
+                android:textAllCaps="false"
+                android:layout_weight="1"/>
+
+        <in.inferon.msl.lemonor.view.ui.LightButton
+                android:id="@+id/whoBT"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/who"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/white"
+                android:background="@drawable/web_bt_bg"
+                android:layout_weight="1"/>
+
+    </LinearLayout>
+</LinearLayout>

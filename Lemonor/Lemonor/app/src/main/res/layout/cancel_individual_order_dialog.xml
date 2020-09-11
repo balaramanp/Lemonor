@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pad_10"
+        app:cardCornerRadius="@dimen/pad_10">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/brightColor">
+            <in.inferon.msl.lemonor.view.ui.BoldTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reject_order"
+                    android:textSize="@dimen/text_16sp"
+                    android:textColor="@color/white"
+                    android:padding="@dimen/pad_10"
+                    android:gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_10">
+            <in.inferon.msl.lemonor.view.ui.LightTextView
+                    android:id="@+id/productNameTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_14sp"
+                    android:textColor="@color/fontColor"
+                    android:layout_marginTop="@dimen/pad_10"/>
+
+            <in.inferon.msl.lemonor.view.ui.LightEditText
+                    android:id="@+id/rejectReasonET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_14sp"
+                    android:textColor="@color/fontColor"
+                    android:hint="@string/reason_for_rejection"
+                    android:textColorHint="@color/light_gray"
+                    android:background="@drawable/main_edit_tx_bg"
+                    android:padding="@dimen/pad_10"
+                    android:layout_marginTop="@dimen/pad_10"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/acceptCancelLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/pad_10">
+            <in.inferon.msl.lemonor.view.ui.LightButton
+                    android:id="@+id/diaCancelBT"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/pad_40"
+                    android:text="@string/back"
+                    android:textSize="@dimen/text_14sp"
+                    android:textColor="@color/reject_bt_color"
+                    android:textAllCaps="false"
+                    android:background="@drawable/reject_bt_bg"
+                    android:layout_weight="1"
+                    android:layout_marginRight="@dimen/pad_5"
+                    android:layout_marginEnd="@dimen/pad_5"/>
+
+            <in.inferon.msl.lemonor.view.ui.LightButton
+                    android:id="@+id/diaOKBT"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/pad_40"
+                    android:text="@string/skip"
+                    android:textSize="@dimen/text_14sp"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    android:background="@drawable/cancel_order_bt"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/pad_5"
+                    android:layout_marginStart="@dimen/pad_5"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

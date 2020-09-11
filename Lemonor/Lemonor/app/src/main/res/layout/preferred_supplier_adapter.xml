@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardView"
+        android:layout_width="@dimen/pad_170"
+        android:layout_height="@dimen/pad_120"
+        app:cardCornerRadius="@dimen/pad_10"
+        android:layout_margin="@dimen/pad_10">
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <View
+                android:id="@+id/backgroundView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"/>
+
+        <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/app_name"
+                android:adjustViewBounds="true"/>
+
+        <View android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/preferred_supplier_card_bg"
+              android:layout_marginTop="@dimen/pad_30"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/pad_10"
+                android:paddingRight="@dimen/pad_10"
+                android:paddingBottom="@dimen/pad_10"
+                android:paddingTop="@dimen/pad_50"
+                android:layout_alignParentBottom="true">
+            <in.inferon.msl.lemonor.view.ui.BoldTextView
+                    android:id="@+id/shopNameTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_16sp"
+                    android:textColor="@color/white"
+                    android:maxLines="3"
+                    android:ellipsize="end"/>
+            <in.inferon.msl.lemonor.view.ui.LightTextView
+                    android:id="@+id/descriptionTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_14sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="@dimen/pad_10"
+                    android:visibility="gone"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+                android:id="@+id/overRatingLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/supplier_rating_bg"
+                android:layout_marginTop="@dimen/pad_5"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:paddingLeft="@dimen/pad_10"
+                android:paddingRight="@dimen/pad_10"
+                android:visibility="gone">
+            <ImageView
+                    android:layout_width="@dimen/pad_10"
+                    android:layout_height="@dimen/pad_10"
+                    android:src="@drawable/ic_grade_white_18dp"
+                    android:contentDescription="@string/app_name"
+                    android:adjustViewBounds="true"/>
+            <in.inferon.msl.lemonor.view.ui.LightTextView
+                    android:id="@+id/overRatingTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_12sp"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="@dimen/pad_5"
+                    android:layout_marginStart="@dimen/pad_5"/>
+        </LinearLayout>
+
+        <ImageView
+                android:id="@+id/shopDetailLayout"
+                android:layout_width="@dimen/pad_20"
+                android:layout_height="@dimen/pad_20"
+                android:src="@drawable/ic_adjust_white_24dp"
+                android:contentDescription="@string/app_name"
+                android:adjustViewBounds="true"
+                android:layout_margin="@dimen/pad_5"/>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

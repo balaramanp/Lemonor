@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pad_30"
+        app:cardCornerRadius="@dimen/pad_10">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/colorPrimary"
+                android:gravity="center_vertical"
+                android:paddingTop="@dimen/pad_10"
+                android:paddingBottom="@dimen/pad_10"
+                android:paddingLeft="@dimen/pad_20"
+                android:paddingRight="@dimen/pad_20">
+            <ImageView
+                    android:layout_width="@dimen/pad_30"
+                    android:layout_height="@dimen/pad_30"
+                    android:src="@drawable/baseline_storefront_black_24dp"
+                    android:contentDescription="@string/app_name"
+                    android:adjustViewBounds="true"/>
+
+            <in.inferon.msl.lemonor.view.ui.BoldTextView
+                    android:id="@+id/storeNameTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_16sp"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="@dimen/pad_10"
+                    android:layout_marginStart="@dimen/pad_10"/>
+        </LinearLayout>
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/pad_20">
+
+                <LinearLayout
+                        android:id="@+id/quickPriceBT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+                    <ImageView
+                            android:layout_width="@dimen/pad_40"
+                            android:layout_height="@dimen/pad_40"
+                            android:src="@drawable/ic_flash_on_green_24dp"
+                            android:scaleType="centerInside"
+                            android:contentDescription="@string/app_name"
+                            android:adjustViewBounds="true"/>
+
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/quick_price_update"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/main_gray"
+                            android:textAllCaps="false"
+                            android:layout_marginLeft="@dimen/pad_10"
+                            android:layout_marginStart="@dimen/pad_10"/>
+                </LinearLayout>
+
+                <LinearLayout
+                        android:id="@+id/addProductBT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                    <ImageView
+                            android:layout_width="@dimen/pad_30"
+                            android:layout_height="@dimen/pad_30"
+                            android:src="@drawable/ic_add_circle_outline_green_24dp"
+                            android:scaleType="centerInside"
+                            android:contentDescription="@string/app_name"
+                            android:adjustViewBounds="true"/>
+
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/add_product"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/main_gray"
+                            android:textAllCaps="false"
+                            android:layout_marginLeft="@dimen/pad_10"
+                            android:layout_marginStart="@dimen/pad_10"/>
+                </LinearLayout>
+
+                <LinearLayout
+                        android:id="@+id/viewProductsBT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/pad_10">
+                    <ImageView
+                            android:layout_width="@dimen/pad_30"
+                            android:layout_height="@dimen/pad_30"
+                            android:src="@drawable/ic_pageview_green_24dp"
+                            android:scaleType="centerInside"
+                            android:contentDescription="@string/app_name"
+                            android:adjustViewBounds="true"/>
+
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/view_edit_products"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/main_gray"
+                            android:textAllCaps="false"
+                            android:layout_marginLeft="@dimen/pad_10"
+                            android:layout_marginStart="@dimen/pad_10"/>
+                </LinearLayout>
+
+                <LinearLayout
+                        android:id="@+id/quickPriceUpdateBT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/pad_10">
+                    <ImageView
+                            android:layout_width="@dimen/pad_30"
+                            android:layout_height="@dimen/pad_30"
+                            android:src="@drawable/ic_flash_on_green_24dp"
+                            android:scaleType="centerInside"
+                            android:contentDescription="@string/app_name"
+                            android:adjustViewBounds="true"/>
+
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/quick_price_update"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/main_gray"
+                            android:textAllCaps="false"
+                            android:layout_marginLeft="@dimen/pad_10"
+                            android:layout_marginStart="@dimen/pad_10"/>
+                </LinearLayout>
+
+                <LinearLayout
+                        android:id="@+id/orderHistoryBT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/pad_10">
+                    <ImageView
+                            android:layout_width="@dimen/pad_30"
+                            android:layout_height="@dimen/pad_30"
+                            android:src="@drawable/ic_receipt_green_24dp"
+                            android:scaleType="centerInside"
+                            android:contentDescription="@string/app_name"
+                            android:adjustViewBounds="true"/>
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/order_history"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/main_gray"
+                            android:textAllCaps="false"
+                            android:layout_marginLeft="@dimen/pad_10"
+                            android:layout_marginStart="@dimen/pad_10"/>
+                </LinearLayout>
+
+                <LinearLayout
+                        android:id="@+id/editProfileBT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/pad_10">
+                    <ImageView
+                            android:layout_width="@dimen/pad_30"
+                            android:layout_height="@dimen/pad_30"
+                            android:src="@drawable/baseline_storefront_green_18dp"
+                            android:scaleType="centerInside"
+                            android:contentDescription="@string/app_name"
+                            android:adjustViewBounds="true"
+                            android:padding="@dimen/pad_5"/>
+
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/edit_seller_profile_amp_location"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/main_gray"
+                            android:textAllCaps="false"
+                            android:layout_marginLeft="@dimen/pad_10"
+                            android:layout_marginStart="@dimen/pad_10"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

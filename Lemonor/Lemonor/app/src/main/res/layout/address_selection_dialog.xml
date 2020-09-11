@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pad_10"
+        app:cardCornerRadius="@dimen/pad_10">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:text="@string/delivery_addresses"
+                android:textSize="@dimen/text_18sp"
+                android:textColor="@color/white"
+                android:background="@color/colorPrimary"
+                android:gravity="center"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/pad_10">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/pad_10"
+                    android:gravity="end|center_vertical">
+
+                <in.inferon.msl.lemonor.view.ui.BoldTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/addresses"
+                        android:textSize="@dimen/text_24sp"
+                        android:textColor="@color/black"
+                        android:layout_weight="1"/>
+
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/addNewAddressLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/add_new"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_bg"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:drawableLeft="@drawable/ic_add_white_18dp"
+                        android:drawableStart="@drawable/ic_add_white_18dp"
+                        android:drawablePadding="@dimen/pad_10"
+                        android:paddingLeft="@dimen/pad_10"
+                        android:paddingRight="@dimen/pad_10"
+                        android:paddingTop="@dimen/pad_5"
+                        android:paddingBottom="@dimen/pad_5"/>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/addressesRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="@dimen/pad_20">
+                <in.inferon.msl.lemonor.view.ui.LightButton
+                        android:id="@+id/cancelBT"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_40"
+                        android:text="@string/cancel"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/main_cancel_bt_color"
+                        android:background="@drawable/main_cancel_bt_bg"
+                        android:layout_weight="1"
+                        android:layout_marginRight="@dimen/pad_5"
+                        android:layout_marginEnd="@dimen/pad_5"/>
+
+                <in.inferon.msl.lemonor.view.ui.LightButton
+                        android:id="@+id/okBT"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_40"
+                        android:text="@string/ok"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_bg"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="@dimen/pad_5"
+                        android:layout_marginStart="@dimen/pad_5"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

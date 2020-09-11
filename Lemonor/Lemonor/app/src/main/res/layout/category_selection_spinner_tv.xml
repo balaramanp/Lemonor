@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<in.inferon.msl.lemonor.view.ui.BoldTextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_16sp"
+        android:textColor="@color/white"
+        android:background="@color/colorPrimary"
+        android:padding="@dimen/pad_10"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_marginRight="@dimen/pad_30"
+        android:layout_marginEnd="@dimen/pad_30"/>
