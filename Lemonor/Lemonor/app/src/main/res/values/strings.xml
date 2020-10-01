@@ -303,4 +303,24 @@
     <string name="net_banking_credit_card_amp_more"><![CDATA[Net Banking, Credit Card & more]]></string>
     <string name="near_by_shop">Nearby Shops</string>
     <string name="RsSymbol">\u20B9</string>
+    <string name="reg_name">Reg. Name</string>
+    <string name="our_price">( Our Price )</string>
+    <string name="facebook_app_id">720391948807039</string>
+    <string name="fb_login_protocol_scheme">fb720391948807039</string>
+    <string name="discount">Discount</string>
+    <string name="extra">Extra</string>
+    <string name="off">off</string>
+    <string name="you_save">You Save</string>
+    <string name="lemonor_price">Lemonor Price</string>
+    <string name="offf">off!</string>
+    <string name="change_address">Change Address</string>
+    <string name="add_address">Add Address</string>
+    <string name="delivery_address">Delivery Address</string>
+    <string name="text_order">Text Order</string>
+    <string name="view_all">View All</string>
+    <string name="delivery_time">Delivery Time</string>
+    <string name="change_time">Change Time</string>
+    <string name="express_delivery">Express Delivery</string>
+    <string name="view_all_category">View all Category</string>
+    <string name="view_all_products">View all Products</string>
 </resources>

@@ -14,6 +14,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_order_summary.*
+import kotlinx.android.synthetic.main.activity_order_summary.afterDiscountValueTV
+import kotlinx.android.synthetic.main.activity_order_summary.backIB
+import kotlinx.android.synthetic.main.activity_order_summary.discountLayout
+import kotlinx.android.synthetic.main.activity_order_summary.discountTotalLayout
+import kotlinx.android.synthetic.main.activity_order_summary.discountTxtTV
+import kotlinx.android.synthetic.main.activity_order_summary.itemCountTV
+import kotlinx.android.synthetic.main.activity_order_summary.itemTV
+import kotlinx.android.synthetic.main.activity_order_summary.o2DescriptionTV
+import kotlinx.android.synthetic.main.activity_order_summary.okBT
+import kotlinx.android.synthetic.main.activity_order_summary.recyclerView
+import kotlinx.android.synthetic.main.activity_order_summary.titleTV
+import kotlinx.android.synthetic.main.activity_order_summary.totalTV
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.DecimalFormat
@@ -25,6 +37,7 @@ class OrderSummaryActivity : AppCompatActivity() {
     private var shopName = ""
     private var o2 = ""
     private var products = ""
+    private var supplierDiscount = ""
     private var productsList = mutableListOf<Products>()
     private var itemCount = 0
     private var total = 0f
@@ -41,9 +54,10 @@ class OrderSummaryActivity : AppCompatActivity() {
 
         shared = getSharedPreferences(PREF, MODE_PRIVATE)
 
-        shopName = intent.getStringExtra("shop_name")
-        o2 = intent.getStringExtra("o2")
-        products = intent.getStringExtra("products")
+        shopName = intent.getStringExtra("shop_name")!!
+        o2 = intent.getStringExtra("o2")!!
+        products = intent.getStringExtra("products")!!
+        supplierDiscount = intent.getStringExtra("supplierDiscount")!!
         productsList = Gson().fromJson(products, object : TypeToken<MutableList<Products>>() {}.type)
         address = Gson().fromJson(
             intent.getStringExtra("address"),
@@ -82,7 +96,14 @@ class OrderSummaryActivity : AppCompatActivity() {
                 confirmArray.put(obj)
                 confirmList.add(i)
 
-                total += i.qty.toInt() * i.rate.toFloat()
+                if (i.discount != "" && i.discount != "0") {
+                    val pre = i.rate.toFloat() / 100
+                    val percentAmount: Float = (pre * i.discount.toFloat())
+                    val ourPrice: Float = (i.rate.toFloat() - percentAmount)
+                    total += i.qty.toInt() * ourPrice
+                } else {
+                    total += i.qty.toInt() * i.rate.toFloat()
+                }
                 itemCount += 1
             }
         }
@@ -100,6 +121,21 @@ class OrderSummaryActivity : AppCompatActivity() {
             itemTV.text = "Item"
         }
         totalTV.text = getString(R.string.Rs) + " " + doubleToStringNoDecimal(total.toDouble())
+        if (supplierDiscount != "" && supplierDiscount != "0") {
+            discountLayout.visibility = View.VISIBLE
+            discountTotalLayout.visibility = View.VISIBLE
+            discountTxtTV.text = "Extra Discount $supplierDiscount%"
+
+            val pre = total / 100
+            val percentAmount: Float = (pre * supplierDiscount.toFloat())
+            val ourPrice: Float = (total - percentAmount)
+            discountValueTV.text = "- " + doubleToStringNoDecimal(percentAmount.toDouble())
+
+            afterDiscountValueTV.text = getString(R.string.Rs) + " " + doubleToStringNoDecimal(ourPrice.toDouble() + 9)
+        } else {
+            discountLayout.visibility = View.GONE
+            discountTotalLayout.visibility = View.GONE
+        }
         recyclerView.layoutManager = LinearLayoutManager(this)
         val confirmOrdersItemAdapter = ConfirmOrdersItemAdapter(this, confirmList)
         recyclerView.adapter = confirmOrdersItemAdapter
@@ -107,13 +143,13 @@ class OrderSummaryActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
 
 
-        firstNameTV.text = address.first_name
-        if (address.last_name != "") {
+        firstNameTV.text = address.first_name + " " + address.last_name
+        /*if (address.last_name != "") {
             lastNameTV.visibility = View.VISIBLE
             lastNameTV.text = address.last_name
         } else {
             lastNameTV.visibility = View.GONE
-        }
+        }*/
         phone1TV.text = address.phone_no1
         if (address.phone_no2 != "") {
             phone2TV.visibility = View.VISIBLE
@@ -152,7 +188,7 @@ class OrderSummaryActivity : AppCompatActivity() {
 
     private fun doubleToStringNoDecimal(d: Double): String? {
         val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
-        formatter.applyPattern("#,##,###.##")
+        formatter.applyPattern("#,##,###.00")
         return formatter.format(d)
     }
 }

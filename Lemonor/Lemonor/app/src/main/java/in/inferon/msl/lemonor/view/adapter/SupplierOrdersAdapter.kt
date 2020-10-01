@@ -1,8 +1,10 @@
 package `in`.inferon.msl.lemonor.view.adapter
 
 import `in`.inferon.msl.lemonor.R
+import `in`.inferon.msl.lemonor.model.Constants
 import `in`.inferon.msl.lemonor.model.Utils
 import `in`.inferon.msl.lemonor.model.pojo.Order
+import `in`.inferon.msl.lemonor.model.pojo.OrderList
 import `in`.inferon.msl.lemonor.repo.Repository
 import `in`.inferon.msl.lemonor.view.activity.OrderInfoActivity
 import `in`.inferon.msl.lemonor.view.activity.ProductSelectionActivity
@@ -27,6 +29,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_order_confirmation.*
 import kotlinx.android.synthetic.main.suppier_orders_adapter.view.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -39,7 +42,7 @@ import java.util.*
 
 class SupplierOrdersAdapter(
     private val context: Context,
-    private val list: MutableList<MutableList<Order>>,
+    private val list: MutableList<OrderList>,
     private val activity: AppCompatActivity
 ) : RecyclerView.Adapter<SupplierOrdersAdapter.ViewHolder>() {
     private var repo: Repository? = null
@@ -59,38 +62,106 @@ class SupplierOrdersAdapter(
     @SuppressLint("SetTextI18n", "SimpleDateFormat", "ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val order = list[position]
-        holder.tokenTV.text = order[0].token_number
-        holder.userNameTV.text = order[0].user_name
-        holder.mobileNoTV.text = order[0].mobile_number
-        holder.orderDateTV.text = order[0].formatted_date + "   " + order[0].formatted_time
+        holder.tokenTV.text = order.productsList[0].token_number
+        holder.userNameTV.text = order.productsList[0].user_name
+        holder.mobileNoTV.text = order.productsList[0].mobile_number
+        holder.orderDateTV.text = order.productsList[0].formatted_date + "   " + order.productsList[0].formatted_time
 
         var totPrice = 0f
         var itemCount = 0
-        for (i in order) {
+        for (i in order.productsList) {
             totPrice += i.price.toFloat()
             itemCount += 1
         }
 
-        holder.totalPriceTV.text = context.getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+        holder.totalPriceTV.text = context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
         holder.itemCountTV.text = itemCount.toString()
         if (itemCount > 1) {
             holder.itemTV.text = "Items"
         } else {
             holder.itemTV.text = "Item"
         }
+        Log.e("TAG", "Live Order Supplier Discount : " + order.supplier_discount)
+        if (order.supplier_discount != "" && order.supplier_discount != "0") {
+            holder.discountLayout.visibility = View.VISIBLE
+            holder.discountTotalLayout.visibility = View.VISIBLE
+            holder.discountTxtTV.text = "Extra Discount ${order.supplier_discount}%"
 
-        if (order[0].order_status == "open") {
+            val pre = totPrice / 100
+            val percentAmount: Float = (pre * order.supplier_discount.toFloat())
+            val ourPrice: Float = (totPrice - percentAmount)
+            holder.discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+            holder.afterDiscountValueTV.text =
+                context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+        } else {
+            holder.discountLayout.visibility = View.GONE
+            holder.discountTotalLayout.visibility = View.GONE
+        }
+
+
+        if (order.productsList[0].order_status == "open") {
             holder.acceptBT.visibility = View.VISIBLE
             holder.orderCompleteBT.visibility = View.GONE
-        } else if (order[0].order_status == "supplier_accepted") {
+        } else if (order.productsList[0].order_status == "supplier_accepted") {
             holder.acceptBT.visibility = View.GONE
             holder.orderCompleteBT.visibility = View.VISIBLE
         }
 
-        holder.recyclerView.layoutManager = LinearLayoutManager(context)
-        val supplierOrdersItemAdapter = SupplierOrdersItemAdapter(context, order, activity)
+        /*holder.recyclerView.layoutManager = LinearLayoutManager(context)
+        val supplierOrdersItemAdapter = SupplierOrdersItemAdapter(context, order.productsList, activity)
         holder.recyclerView.adapter = supplierOrdersItemAdapter
-        holder.recyclerView.isNestedScrollingEnabled = false
+        holder.recyclerView.isNestedScrollingEnabled = false*/
+
+        if (order.productsList[0].product_name != "O2") {
+            holder.itemLayout1.visibility = View.VISIBLE
+            holder.o2Layout.visibility = View.GONE
+            holder.productNameTV1.text = order.productsList[0].product_name
+            holder.productQtyTV1.text = order.productsList[0].qty
+            holder.productUnitTV1.text = order.productsList[0].unit
+            holder.productRateTV1.text = "(" + doubleToStringNoDecimal(order.productsList[0].rate.toDouble()) + ")"
+            holder.productPriceTV1.text = doubleToStringTwoDecimal(order.productsList[0].price.toDouble())
+        } else {
+            holder.o2Layout.visibility = View.VISIBLE
+            holder.itemLayout1.visibility = View.GONE
+            holder.o2DescriptionTV.text = order.productsList[0].description
+            if (order.productsList[0].price.toFloat() == 0f) {
+                holder.o2ProductPriceTV.visibility = View.INVISIBLE
+            } else {
+                holder.o2ProductPriceTV.visibility = View.VISIBLE
+                holder.o2ProductPriceTV.text = doubleToStringTwoDecimal(order.productsList[0].price.toDouble())
+            }
+        }
+
+        if (order.productsList.size >= 2) {
+            holder.itemLayout2.visibility = View.VISIBLE
+            holder.productNameTV2.text = order.productsList[1].product_name
+            holder.productQtyTV2.text = order.productsList[1].qty
+            holder.productUnitTV2.text = order.productsList[1].unit
+            holder.productRateTV2.text = "(" + doubleToStringNoDecimal(order.productsList[1].rate.toDouble()) + ")"
+            holder.productPriceTV2.text = doubleToStringTwoDecimal(order.productsList[1].price.toDouble())
+        } else {
+            holder.itemLayout2.visibility = View.GONE
+        }
+
+        if (order.productsList.size >= 3) {
+            holder.itemLayout3.visibility = View.VISIBLE
+            holder.productNameTV3.text = order.productsList[2].product_name
+            holder.productQtyTV3.text = order.productsList[2].qty
+            holder.productUnitTV3.text = order.productsList[2].unit
+            holder.productRateTV3.text = "(" + doubleToStringNoDecimal(order.productsList[2].rate.toDouble()) + ")"
+            holder.productPriceTV3.text = doubleToStringTwoDecimal(order.productsList[2].price.toDouble())
+        } else {
+            holder.itemLayout3.visibility = View.GONE
+        }
+
+        if (order.productsList.size > 3) {
+            holder.moreItemCountTV.visibility = View.VISIBLE
+            holder.moreItemCountTV.text = (itemCount - 3).toString() + " more Items"
+        } else {
+            holder.moreItemCountTV.visibility = View.GONE
+        }
+
 
 
         holder.callLayout.setOnClickListener {
@@ -103,8 +174,8 @@ class SupplierOrdersAdapter(
             val diaCancelBT = dialog.findViewById(R.id.diaCancelBT) as Button
             val diaOKBT = dialog.findViewById(R.id.diaOKBT) as Button
 
-            diaUserNameTV.text = order[0].user_name
-            diaMobileNoTV.text = order[0].mobile_number
+            diaUserNameTV.text = order.productsList[0].user_name
+            diaMobileNoTV.text = order.productsList[0].mobile_number
 
             diaCancelBT.setOnClickListener {
                 dialog.dismiss()
@@ -112,7 +183,7 @@ class SupplierOrdersAdapter(
 
             diaOKBT.setOnClickListener {
                 val callIntent = Intent(Intent.ACTION_DIAL)
-                callIntent.data = Uri.parse("tel:" + order[0].mobile_number)
+                callIntent.data = Uri.parse("tel:" + order.productsList[0].mobile_number)
                 context.startActivity(callIntent)
             }
 
@@ -123,6 +194,7 @@ class SupplierOrdersAdapter(
         }
 
         holder.cancelBT.setOnClickListener {
+            holder.cancelBT.isClickable = false
             val dialog = Dialog(context)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(R.layout.cancel_order_status_dialog)
@@ -134,27 +206,55 @@ class SupplierOrdersAdapter(
             val itemTV = dialog.findViewById<TextView>(R.id.itemTV)
             val itemCountTV = dialog.findViewById<TextView>(R.id.itemCountTV)
             val totalPriceTV = dialog.findViewById<TextView>(R.id.totalPriceTV)
+            val discountLayout = dialog.findViewById<LinearLayout>(R.id.discountLayout)
+            val discountTxtTV = dialog.findViewById<TextView>(R.id.discountTxtTV)
+            val discountValueTV = dialog.findViewById<TextView>(R.id.discountValueTV)
+            val discountTotalLayout = dialog.findViewById<LinearLayout>(R.id.discountTotalLayout)
+            val afterDiscountValueTV = dialog.findViewById<TextView>(R.id.afterDiscountValueTV)
             val rejectReasonET = dialog.findViewById<EditText>(R.id.rejectReasonET)
             val cancelBT = dialog.findViewById<Button>(R.id.cancelBT)
             val okBT = dialog.findViewById<Button>(R.id.okBT)
+            val closeIB = dialog.findViewById<ImageButton>(R.id.closeIB)
 
             titleTV.text = "Reject Order"
-            userNameTV.text = order[0].user_name
-            mobileNoTV.text = order[0].mobile_number
+            userNameTV.text = order.productsList[0].user_name
+            mobileNoTV.text = order.productsList[0].mobile_number
             itemCountTV.text = itemCount.toString()
             if (itemCount > 1) {
                 itemTV.text = "Items"
             } else {
                 itemTV.text = "Item"
             }
-            totalPriceTV.text = context.getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+            totalPriceTV.text = context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
+            if (list[position].supplier_discount != "" && list[position].supplier_discount != "0" && list[position].supplier_discount != null) {
+                discountLayout.visibility = View.VISIBLE
+                discountTotalLayout.visibility = View.VISIBLE
+                discountTxtTV.text = "Extra Discount ${list[position].supplier_discount}%"
+
+                val pre = totPrice / 100
+                val percentAmount: Float = (pre * list[position].supplier_discount.toFloat())
+                val ourPrice: Float = (totPrice - percentAmount)
+                discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+                afterDiscountValueTV.text =
+                    Constants.context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+            } else {
+                discountLayout.visibility = View.GONE
+                discountTotalLayout.visibility = View.GONE
+            }
             recyclerView.layoutManager = LinearLayoutManager(context)
-            val supplierOrdersItemAdapter = SupplierOrdersItemAdapter(context, order, activity)
+            val supplierOrdersItemAdapter = SupplierOrdersItemAdapter(context, order.productsList, activity)
             recyclerView.adapter = supplierOrdersItemAdapter
             recyclerView.isNestedScrollingEnabled = false
             recyclerView.setHasFixedSize(true)
 
+            closeIB.setOnClickListener {
+                holder.cancelBT.isClickable = true
+                dialog.dismiss()
+            }
+
             cancelBT.setOnClickListener {
+                holder.cancelBT.isClickable = true
                 dialog.dismiss()
             }
 
@@ -170,9 +270,9 @@ class SupplierOrdersAdapter(
                     pos = position
                     removeStatus = true
                     val obj = JSONObject()
-                    obj.put("token_number", order[0].token_number)
-                    obj.put("added_datetime", order[0].added_datetime)
-                    obj.put("user_id", order[0].user_id)
+                    obj.put("token_number", order.productsList[0].token_number)
+                    obj.put("added_datetime", order.productsList[0].added_datetime)
+                    obj.put("user_id", order.productsList[0].user_id)
                     if (rejectReasonET.text.toString().trim().length > 0) {
                         obj.put("reject_reason", rejectReasonET.text.toString().trim())
                     } else {
@@ -189,7 +289,7 @@ class SupplierOrdersAdapter(
                         if (jsonObject.getString("status") == "ok") {
                             if (removeStatus) {
                                 removeStatus = false
-                                for (i in order) {
+                                for (i in order.productsList) {
                                     if (i.order_status == "open" || i.order_status == "supplier_accepted") {
                                         i.order_status = "supplier_rejected"
                                     }
@@ -211,7 +311,7 @@ class SupplierOrdersAdapter(
                         } else if (jsonObject.getString("status") == "cannot_be_done") {
                             if (removeStatus) {
                                 removeStatus = false
-                                for (i in order) {
+                                for (i in order.productsList) {
                                     i.order_status = "completed"
                                 }
                                 list.removeAt(pos)
@@ -228,12 +328,14 @@ class SupplierOrdersAdapter(
 
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
             dialog.show()
             val window = dialog.window!!
             window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         }
 
         holder.acceptBT.setOnClickListener {
+            holder.acceptBT.isClickable = false
             val dialog = Dialog(context)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(R.layout.order_status_dialog)
@@ -245,25 +347,54 @@ class SupplierOrdersAdapter(
             val itemCountTV = dialog.findViewById<TextView>(R.id.itemCountTV)
             val itemTV = dialog.findViewById<TextView>(R.id.itemTV)
             val totalPriceTV = dialog.findViewById<TextView>(R.id.totalPriceTV)
+            val discountLayout = dialog.findViewById<LinearLayout>(R.id.discountLayout)
+            val discountTxtTV = dialog.findViewById<TextView>(R.id.discountTxtTV)
+            val discountValueTV = dialog.findViewById<TextView>(R.id.discountValueTV)
+            val discountTotalLayout = dialog.findViewById<LinearLayout>(R.id.discountTotalLayout)
+            val afterDiscountValueTV = dialog.findViewById<TextView>(R.id.afterDiscountValueTV)
             val cancelBT = dialog.findViewById<Button>(R.id.cancelBT)
             val okBT = dialog.findViewById<Button>(R.id.okBT)
+            val closeIB = dialog.findViewById<ImageButton>(R.id.closeIB)
 
             titleTV.text = "Accept Order"
-            userNameTV.text = order[0].user_name
-            mobileNoTV.text = order[0].mobile_number
+            userNameTV.text = order.productsList[0].user_name
+            mobileNoTV.text = order.productsList[0].mobile_number
             itemCountTV.text = itemCount.toString()
             if (itemCount > 1) {
                 itemTV.text = "Items"
             } else {
                 itemTV.text = "Item"
             }
-            totalPriceTV.text = context.getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+            totalPriceTV.text = context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
+            if (list[position].supplier_discount != "" && list[position].supplier_discount != "0" && list[position].supplier_discount != null) {
+                discountLayout.visibility = View.VISIBLE
+                discountTotalLayout.visibility = View.VISIBLE
+                discountTxtTV.text = "Extra Discount ${list[position].supplier_discount}%"
+
+                val pre = totPrice / 100
+                val percentAmount: Float = (pre * list[position].supplier_discount.toFloat())
+                val ourPrice: Float = (totPrice - percentAmount)
+                discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+                afterDiscountValueTV.text =
+                    Constants.context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+            } else {
+                discountLayout.visibility = View.GONE
+                discountTotalLayout.visibility = View.GONE
+            }
+
             recyclerView.layoutManager = LinearLayoutManager(context)
-            val supplierOrdersItemAdapter = SupplierOrdersItemAdapter(context, order, activity)
+            val supplierOrdersItemAdapter = SupplierOrdersItemAdapter(context, order.productsList, activity)
             recyclerView.adapter = supplierOrdersItemAdapter
+
+            closeIB.setOnClickListener {
+                dialog.dismiss()
+                holder.acceptBT.isClickable = true
+            }
 
             cancelBT.setOnClickListener {
                 dialog.dismiss()
+                holder.acceptBT.isClickable = true
             }
 
             okBT.setOnClickListener {
@@ -272,9 +403,9 @@ class SupplierOrdersAdapter(
                 removeStatus = true
                 showProgressBar()
                 val obj = JSONObject()
-                obj.put("token_number", order[0].token_number)
-                obj.put("added_datetime", order[0].added_datetime)
-                obj.put("user_id", order[0].user_id)
+                obj.put("token_number", order.productsList[0].token_number)
+                obj.put("added_datetime", order.productsList[0].added_datetime)
+                obj.put("user_id", order.productsList[0].user_id)
                 repo!!.updateSupplierAcceptedByTokenNumber(obj.toString())
                 dialog.dismiss()
 
@@ -287,7 +418,7 @@ class SupplierOrdersAdapter(
                             holder.orderCompleteBT.visibility = View.VISIBLE
                             if (removeStatus) {
                                 removeStatus = false
-                                for (i in order) {
+                                for (i in order.productsList) {
                                     if (i.order_status == "open") {
                                         i.order_status = "supplier_accepted"
                                     }
@@ -305,7 +436,7 @@ class SupplierOrdersAdapter(
                         } else if (jsonObject.getString("status") == "cannot_be_done") {
                             if (removeStatus) {
                                 removeStatus = false
-                                for (i in order) {
+                                for (i in order.productsList) {
                                     i.order_status = "completed"
                                 }
                                 list.removeAt(pos)
@@ -322,6 +453,7 @@ class SupplierOrdersAdapter(
 
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
             dialog.show()
             val window = dialog.window!!
             window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -333,7 +465,7 @@ class SupplierOrdersAdapter(
             var des = ""
             var ordID = ""
             var pos = 0
-            order.forEachIndexed { index, o ->
+            order.productsList.forEachIndexed { index, o ->
                 if (o.product_name == "O2") {
                     des = o.description
                     ordID = o.order_id
@@ -344,6 +476,7 @@ class SupplierOrdersAdapter(
 
 
             if (o2Exist) {
+                holder.orderCompleteBT.isClickable = false
                 val dialog = Dialog(context)
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 dialog.setContentView(R.layout.o2_order_status_dialog)
@@ -354,11 +487,18 @@ class SupplierOrdersAdapter(
                 val o2AcceptCancelLayout = dialog.findViewById<LinearLayout>(R.id.o2AcceptCancelLayout)
                 val cancelBT = dialog.findViewById<Button>(R.id.cancelBT)
                 val okBT = dialog.findViewById<Button>(R.id.okBT)
+                val closeIB = dialog.findViewById<ImageButton>(R.id.closeIB)
 
                 o2DescriptionTV.text = des
 
+                closeIB.setOnClickListener {
+                    dialog.dismiss()
+                    holder.orderCompleteBT.isClickable = true
+                }
+
                 cancelBT.setOnClickListener {
                     dialog.dismiss()
+                    holder.orderCompleteBT.isClickable = true
                 }
 
                 okBT.setOnClickListener {
@@ -383,7 +523,7 @@ class SupplierOrdersAdapter(
                                     Log.e("TAG", "Update O2 Price From Supplier In Order Response : $responseString")
                                     val jsonObject = JSONObject(responseString)
                                     if (jsonObject.getString("status") == "ok") {
-                                        order[pos].price = o2PriceET.text.toString().trim()
+                                        order.productsList[pos].price = o2PriceET.text.toString().trim()
                                         dialog.dismiss()
 
                                         val cDialog = Dialog(context)
@@ -397,12 +537,20 @@ class SupplierOrdersAdapter(
                                         val itemCountTV = cDialog.findViewById<TextView>(R.id.itemCountTV)
                                         val itemTV = cDialog.findViewById<TextView>(R.id.itemTV)
                                         val totalPriceTV = cDialog.findViewById<TextView>(R.id.totalPriceTV)
+                                        val discountLayout = cDialog.findViewById<LinearLayout>(R.id.discountLayout)
+                                        val discountTxtTV = cDialog.findViewById<TextView>(R.id.discountTxtTV)
+                                        val discountValueTV = cDialog.findViewById<TextView>(R.id.discountValueTV)
+                                        val discountTotalLayout =
+                                            cDialog.findViewById<LinearLayout>(R.id.discountTotalLayout)
+                                        val afterDiscountValueTV =
+                                            cDialog.findViewById<TextView>(R.id.afterDiscountValueTV)
                                         val ccancelBT = cDialog.findViewById<Button>(R.id.cancelBT)
                                         val cokBT = cDialog.findViewById<Button>(R.id.okBT)
+                                        val ccloseIB = cDialog.findViewById<ImageButton>(R.id.closeIB)
 
                                         titleTV.text = "Complete Order"
-                                        userNameTV.text = order[0].user_name
-                                        mobileNoTV.text = order[0].mobile_number
+                                        userNameTV.text = order.productsList[0].user_name
+                                        mobileNoTV.text = order.productsList[0].mobile_number
                                         itemCountTV.text = itemCount.toString()
                                         if (itemCount > 1) {
                                             itemTV.text = "Items"
@@ -411,21 +559,48 @@ class SupplierOrdersAdapter(
                                         }
 
                                         var tPrice = 0f
-                                        for (i in order) {
+                                        for (i in order.productsList) {
                                             tPrice += i.price.toFloat()
                                         }
 
                                         totalPriceTV.text =
-                                            context.getString(R.string.Rs) + " " + doubleToStringNoDecimal(tPrice.toDouble())
+                                            context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(tPrice.toDouble())
+                                        if (list[position].supplier_discount != "" && list[position].supplier_discount != "0" && list[position].supplier_discount != null) {
+                                            discountLayout.visibility = View.VISIBLE
+                                            discountTotalLayout.visibility = View.VISIBLE
+                                            discountTxtTV.text = "Extra Discount ${list[position].supplier_discount}%"
+
+                                            val pre = totPrice / 100
+                                            val percentAmount: Float =
+                                                (pre * list[position].supplier_discount.toFloat())
+                                            val ourPrice: Float = (totPrice - percentAmount)
+                                            discountValueTV.text =
+                                                "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+                                            afterDiscountValueTV.text =
+                                                Constants.context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(
+                                                    ourPrice.toDouble()
+                                                )
+                                        } else {
+                                            discountLayout.visibility = View.GONE
+                                            discountTotalLayout.visibility = View.GONE
+                                        }
+
                                         recyclerView.layoutManager = LinearLayoutManager(context)
                                         val csupplierOrdersItemAdapter =
-                                            SupplierOrdersItemAdapter(context, order, activity)
+                                            SupplierOrdersItemAdapter(context, order.productsList, activity)
                                         recyclerView.adapter = csupplierOrdersItemAdapter
+
+                                        ccloseIB.setOnClickListener {
+                                            cDialog.dismiss()
+                                            holder.orderCompleteBT.isClickable = true
+                                        }
 
                                         ccancelBT.setOnClickListener {
                                             repo!!.updateO2PriceFromSupplierInOrder.removeObserver {}
                                             notifyDataSetChanged()
                                             cDialog.dismiss()
+                                            holder.orderCompleteBT.isClickable = true
                                         }
 
                                         cokBT.setOnClickListener {
@@ -442,11 +617,12 @@ class SupplierOrdersAdapter(
                                                 pos = position
                                                 removeStatus = true
                                                 val cobj = JSONObject()
-                                                cobj.put("token_number", order[0].token_number)
-                                                cobj.put("added_datetime", order[0].added_datetime)
-                                                cobj.put("user_id", order[0].user_id)
+                                                cobj.put("token_number", order.productsList[0].token_number)
+                                                cobj.put("added_datetime", order.productsList[0].added_datetime)
+                                                cobj.put("user_id", order.productsList[0].user_id)
                                                 repo!!.updateSupplierCompletedByTokenNumber(cobj.toString())
                                                 cDialog.dismiss()
+                                                holder.orderCompleteBT.isClickable = true
                                             }
 
                                             repo!!.updateSupplierCompletedByTokenNumber.observe(
@@ -459,7 +635,7 @@ class SupplierOrdersAdapter(
                                                             Log.e("TAG", "Global Position : $pos")
                                                             if (removeStatus) {
                                                                 removeStatus = false
-                                                                for (i in order) {
+                                                                for (i in order.productsList) {
                                                                     if (i.order_status == "supplier_accepted") {
                                                                         i.order_status = "completed"
                                                                     }
@@ -494,7 +670,7 @@ class SupplierOrdersAdapter(
                                                         } else if (jsonObject.getString("status") == "cannot_be_done") {
                                                             if (removeStatus) {
                                                                 removeStatus = false
-                                                                for (i in order) {
+                                                                for (i in order.productsList) {
                                                                     i.order_status = "completed"
                                                                 }
                                                                 list.removeAt(pos)
@@ -511,6 +687,7 @@ class SupplierOrdersAdapter(
 
                                         cDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                                         cDialog.setCanceledOnTouchOutside(false)
+                                        cDialog.setCancelable(false)
                                         cDialog.show()
                                         val window = cDialog.window!!
                                         window.setLayout(
@@ -533,10 +710,12 @@ class SupplierOrdersAdapter(
 
                 dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 dialog.setCanceledOnTouchOutside(false)
+                dialog.setCancelable(false)
                 dialog.show()
                 val window = dialog.window!!
                 window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             } else {
+
                 val cDialog = Dialog(context)
                 cDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 cDialog.setContentView(R.layout.order_status_dialog)
@@ -548,24 +727,53 @@ class SupplierOrdersAdapter(
                 val itemCountTV = cDialog.findViewById<TextView>(R.id.itemCountTV)
                 val itemTV = cDialog.findViewById<TextView>(R.id.itemTV)
                 val totalPriceTV = cDialog.findViewById<TextView>(R.id.totalPriceTV)
+                val discountLayout = cDialog.findViewById<LinearLayout>(R.id.discountLayout)
+                val discountTxtTV = cDialog.findViewById<TextView>(R.id.discountTxtTV)
+                val discountValueTV = cDialog.findViewById<TextView>(R.id.discountValueTV)
+                val discountTotalLayout = cDialog.findViewById<LinearLayout>(R.id.discountTotalLayout)
+                val afterDiscountValueTV = cDialog.findViewById<TextView>(R.id.afterDiscountValueTV)
                 val ccancelBT = cDialog.findViewById<Button>(R.id.cancelBT)
                 val cokBT = cDialog.findViewById<Button>(R.id.okBT)
+                val ccloseIB = cDialog.findViewById<ImageButton>(R.id.closeIB)
 
                 titleTV.text = "Complete Order"
-                userNameTV.text = order[0].user_name
-                mobileNoTV.text = order[0].mobile_number
+                userNameTV.text = order.productsList[0].user_name
+                mobileNoTV.text = order.productsList[0].mobile_number
                 itemCountTV.text = itemCount.toString()
                 if (itemCount > 1) {
                     itemTV.text = "Items"
                 } else {
                     itemTV.text = "Item"
                 }
-                totalPriceTV.text = context.getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+                totalPriceTV.text = context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
+                if (list[position].supplier_discount != "" && list[position].supplier_discount != "0" && list[position].supplier_discount != null) {
+                    discountLayout.visibility = View.VISIBLE
+                    discountTotalLayout.visibility = View.VISIBLE
+                    discountTxtTV.text = "Extra Discount ${list[position].supplier_discount}%"
+
+                    val pre = totPrice / 100
+                    val percentAmount: Float = (pre * list[position].supplier_discount.toFloat())
+                    val ourPrice: Float = (totPrice - percentAmount)
+                    discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+                    afterDiscountValueTV.text =
+                        Constants.context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+                } else {
+                    discountLayout.visibility = View.GONE
+                    discountTotalLayout.visibility = View.GONE
+                }
+
                 recyclerView.layoutManager = LinearLayoutManager(context)
-                val csupplierOrdersItemAdapter = SupplierOrdersItemAdapter(context, order, activity)
+                val csupplierOrdersItemAdapter = SupplierOrdersItemAdapter(context, order.productsList, activity)
                 recyclerView.adapter = csupplierOrdersItemAdapter
 
+                ccloseIB.setOnClickListener {
+                    holder.orderCompleteBT.isClickable = true
+                    cDialog.dismiss()
+                }
+
                 ccancelBT.setOnClickListener {
+                    holder.orderCompleteBT.isClickable = true
                     cDialog.dismiss()
                 }
 
@@ -582,11 +790,12 @@ class SupplierOrdersAdapter(
                         pos = position
                         removeStatus = true
                         val cobj = JSONObject()
-                        cobj.put("token_number", order[0].token_number)
-                        cobj.put("added_datetime", order[0].added_datetime)
-                        cobj.put("user_id", order[0].user_id)
+                        cobj.put("token_number", order.productsList[0].token_number)
+                        cobj.put("added_datetime", order.productsList[0].added_datetime)
+                        cobj.put("user_id", order.productsList[0].user_id)
                         repo!!.updateSupplierCompletedByTokenNumber(cobj.toString())
                         cDialog.dismiss()
+                        holder.orderCompleteBT.isClickable = true
                     }
 
                     repo!!.updateSupplierCompletedByTokenNumber.observe(
@@ -600,7 +809,7 @@ class SupplierOrdersAdapter(
                                     Log.e("TAG", "Global Position : $pos")
                                     if (removeStatus) {
                                         removeStatus = false
-                                        for (i in order) {
+                                        for (i in order.productsList) {
                                             if (i.order_status == "supplier_accepted") {
                                                 i.order_status = "completed"
                                             }
@@ -630,7 +839,7 @@ class SupplierOrdersAdapter(
                                 } else if (cjsonObject.getString("status") == "cannot_be_done") {
                                     if (removeStatus) {
                                         removeStatus = false
-                                        for (i in order) {
+                                        for (i in order.productsList) {
                                             i.order_status = "completed"
                                         }
                                         list.removeAt(pos)
@@ -647,6 +856,7 @@ class SupplierOrdersAdapter(
 
                 cDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 cDialog.setCanceledOnTouchOutside(false)
+                cDialog.setCancelable(false)
                 cDialog.show()
                 val window = cDialog.window!!
                 window.setLayout(
@@ -669,6 +879,7 @@ class SupplierOrdersAdapter(
                     val intent = Intent(context, OrderInfoActivity::class.java)
                     intent.putExtra("from", "live")
                     intent.putExtra("data", Gson().toJson(order))
+                    intent.putExtra("supplierDiscount", order.supplier_discount)
                     context.startActivity(intent)
                 }
 
@@ -681,7 +892,8 @@ class SupplierOrdersAdapter(
             context.startActivity(intent, options.toBundle())*/
         }
 
-        holder.recyclerView.setOnTouchListener { v, event ->
+
+        /*holder.recyclerView.setOnTouchListener { v, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 val animation: Animation = AnimationUtils.loadAnimation(context, R.anim.card_click_anim)
                 holder.cardView.startAnimation(animation)
@@ -694,18 +906,19 @@ class SupplierOrdersAdapter(
                         val intent = Intent(context, OrderInfoActivity::class.java)
                         intent.putExtra("from", "live")
                         intent.putExtra("data", Gson().toJson(order))
+                        intent.putExtra("supplierDiscount", order.supplier_discount)
                         context.startActivity(intent)
                     }
 
                     override fun onAnimationStart(animation: Animation?) {
                     }
                 })
-                /*val imageViewPair = Pair.create<View?, String?>(holder.orderDateTV, "orderDate")
+                *//*val imageViewPair = Pair.create<View?, String?>(holder.orderDateTV, "orderDate")
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, imageViewPair)
-                context.startActivity(intent, options.toBundle())*/
+                context.startActivity(intent, options.toBundle())*//*
             }
             false
-        }
+        }*/
 
 //        setAnimation(holder.cardView, position)
     }
@@ -728,7 +941,6 @@ class SupplierOrdersAdapter(
         val callLayout = view.callLayout!!
         val userNameTV = view.userNameTV!!
         val mobileNoTV = view.mobileNoTV!!
-        val recyclerView = view.recyclerView!!
         val itemCountTV = view.itemCountTV!!
         val itemTV = view.itemTV!!
         val totalPriceTV = view.totalPriceTV!!
@@ -736,7 +948,35 @@ class SupplierOrdersAdapter(
         val acceptBT = view.acceptBT!!
         val orderCompleteBT = view.orderCompleteBT!!
         val cardView = view.cardView!!
-        val recyclerViewLayout = view.recyclerViewLayout!!
+        val discountLayout = view.discountLayout!!
+        val discountTxtTV = view.discountTxtTV!!
+        val discountValueTV = view.discountValueTV!!
+        val discountTotalLayout = view.discountTotalLayout!!
+        val afterDiscountValueTV = view.afterDiscountValueTV!!
+//        val recyclerView = view.recyclerView!!
+
+        val o2Layout = view.o2Layout!!
+        val o2DescriptionTV = view.o2DescriptionTV!!
+        val o2ProductPriceTV = view.o2ProductPriceTV!!
+        val itemLayout1 = view.itemLayout1!!
+        val productNameTV1 = view.productNameTV1!!
+        val productQtyTV1 = view.productQtyTV1!!
+        val productUnitTV1 = view.productUnitTV1!!
+        val productRateTV1 = view.productRateTV1!!
+        val productPriceTV1 = view.productPriceTV1!!
+        val itemLayout2 = view.itemLayout2!!
+        val productNameTV2 = view.productNameTV2!!
+        val productQtyTV2 = view.productQtyTV2!!
+        val productUnitTV2 = view.productUnitTV2!!
+        val productRateTV2 = view.productRateTV2!!
+        val productPriceTV2 = view.productPriceTV2!!
+        val itemLayout3 = view.itemLayout3!!
+        val productNameTV3 = view.productNameTV3!!
+        val productQtyTV3 = view.productQtyTV3!!
+        val productUnitTV3 = view.productUnitTV3!!
+        val productRateTV3 = view.productRateTV3!!
+        val productPriceTV3 = view.productPriceTV3!!
+        val moreItemCountTV = view.moreItemCountTV!!
     }
 
     private fun showProgressBar() {
@@ -757,6 +997,12 @@ class SupplierOrdersAdapter(
     private fun doubleToStringNoDecimal(d: Double): String? {
         val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
         formatter.applyPattern("#,##,###.##")
+        return formatter.format(d)
+    }
+
+    private fun doubleToStringTwoDecimal(d: Double): String? {
+        val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
+        formatter.applyPattern("#,##,###.00")
         return formatter.format(d)
     }
 }

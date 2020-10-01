@@ -3,6 +3,9 @@ package `in`.inferon.msl.lemonor.model
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import com.facebook.FacebookSdk
+import com.facebook.appevents.AppEventsLogger
+import com.google.android.gms.measurement.module.Analytics
 import io.branch.referral.Branch
 import org.acra.ACRA
 import org.acra.BuildConfig
@@ -32,5 +35,8 @@ class App : Application() {
 
         // Branch object initialization
         Branch.getAutoInstance(this)
+
+        FacebookSdk.sdkInitialize(applicationContext)
+        AppEventsLogger.activateApp(this)
     }
 }

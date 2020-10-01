@@ -1,19 +1,25 @@
 package `in`.inferon.msl.lemonor.view.adapter
 
 import `in`.inferon.msl.lemonor.R
+import `in`.inferon.msl.lemonor.model.Constants
+import `in`.inferon.msl.lemonor.model.pojo.MajorCategory
 import `in`.inferon.msl.lemonor.view.activity.PlaceOrderActivity
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.select_categories_adapter.view.*
+import java.lang.Exception
 
 class SelectCategoriesAdapter(
     private val context: Context,
-    private val list: MutableList<String>,
+    private val list: MutableList<MajorCategory>,
     private val placeOrderActivity: PlaceOrderActivity
 ) : RecyclerView.Adapter<SelectCategoriesAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,22 +31,42 @@ class SelectCategoriesAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.categoryRB.text = list[position]
+        val imgUrl =
+            Constants.CATEGORY_IMG_BASE_URL + list[position].categoryName + ".jpg"
+        Log.e("TAG", "Category Image URL : $imgUrl")
+        try {
+            Picasso.get().load(imgUrl).into(holder.imageView, object : Callback {
+                override fun onSuccess() {
+                }
 
-        holder.categoryRB.setOnClickListener {
-//            loadData(list[position], position)
-            placeOrderActivity.receiveClickListener(list[position])
+                override fun onError(e: Exception?) {
+
+                }
+
+            })
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        holder.categoryTV.text = list[position].categoryName
+
+        holder.cardView.setOnClickListener {
+            //            loadData(list[position], position)
+            placeOrderActivity.receiveClickListener(list[position].categoryName)
+        }
+
+        if (list[position].isProductExists){
+            holder.cardView.alpha = 1.0f
+            holder.cardView.isClickable = true
+        }else{
+            holder.cardView.alpha = 0.5f
+            holder.cardView.isClickable = false
         }
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val categoryRB = view.categoryRB!!
-    }
-
-    private fun loadData(category: String, position: Int) {
-        val intent = Intent("SelectCategory")
-        intent.putExtra("position", position)
-        intent.putExtra("selectCategory", category)
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+        val cardView = view.cardView!!
+        val imageView = view.imageView!!
+        val categoryTV = view.categoryTV!!
     }
 }

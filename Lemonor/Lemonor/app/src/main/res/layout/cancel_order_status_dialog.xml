@@ -10,10 +10,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <LinearLayout
+        <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_height="@dimen/pad_40"
                 android:background="@color/brightColor">
             <in.inferon.msl.lemonor.view.ui.BoldTextView
                     android:id="@+id/titleTV"
@@ -23,7 +22,17 @@
                     android:textColor="@color/white"
                     android:padding="@dimen/pad_10"
                     android:gravity="center"/>
-        </LinearLayout>
+            <ImageButton
+                    android:id="@+id/closeIB"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="@dimen/pad_40"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_close_white_18dp"
+                    android:contentDescription="@string/app_name"
+                    android:adjustViewBounds="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
 
         <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -120,6 +129,55 @@
                             android:textColor="@color/fontColor"
                             android:gravity="end"
                             android:layout_weight="1"/>
+                </LinearLayout>
+
+                <LinearLayout
+                        android:id="@+id/discountLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/pad_5">
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:id="@+id/discountTxtTV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/orange"
+                            android:gravity="end"
+                            android:layout_weight="1"/>
+                    <in.inferon.msl.lemonor.view.ui.BoldTextView
+                            android:id="@+id/discountValueTV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/orange"
+                            android:gravity="end"
+                            android:layout_weight="2"/>
+                </LinearLayout>
+
+
+                <LinearLayout
+                        android:id="@+id/discountTotalLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/pad_5">
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/total"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/orange"
+                            android:gravity="end"
+                            android:layout_weight="1"/>
+                    <in.inferon.msl.lemonor.view.ui.BoldTextView
+                            android:id="@+id/afterDiscountValueTV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/orange"
+                            android:gravity="end"
+                            android:layout_weight="2"/>
                 </LinearLayout>
 
                 <in.inferon.msl.lemonor.view.ui.LightEditText

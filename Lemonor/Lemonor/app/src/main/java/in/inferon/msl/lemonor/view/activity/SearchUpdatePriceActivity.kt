@@ -3,6 +3,7 @@ package `in`.inferon.msl.lemonor.view.activity
 import `in`.inferon.msl.lemonor.R
 import `in`.inferon.msl.lemonor.model.pojo.Products
 import `in`.inferon.msl.lemonor.repo.Repository
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -27,11 +28,15 @@ import kotlinx.android.synthetic.main.activity_search_update_price.dotBT
 import kotlinx.android.synthetic.main.activity_search_update_price.eightBT
 import kotlinx.android.synthetic.main.activity_search_update_price.fiveBT
 import kotlinx.android.synthetic.main.activity_search_update_price.fourBT
+import kotlinx.android.synthetic.main.activity_search_update_price.mrpLayout
+import kotlinx.android.synthetic.main.activity_search_update_price.mrpTV
 import kotlinx.android.synthetic.main.activity_search_update_price.nineBT
 import kotlinx.android.synthetic.main.activity_search_update_price.oneBT
+import kotlinx.android.synthetic.main.activity_search_update_price.percentageOffTV
 import kotlinx.android.synthetic.main.activity_search_update_price.priceTV
 import kotlinx.android.synthetic.main.activity_search_update_price.productAliasNameTV
 import kotlinx.android.synthetic.main.activity_search_update_price.productDetailsLayout
+import kotlinx.android.synthetic.main.activity_search_update_price.productMRPTV
 import kotlinx.android.synthetic.main.activity_search_update_price.productNameTV
 import kotlinx.android.synthetic.main.activity_search_update_price.progressLayout
 import kotlinx.android.synthetic.main.activity_search_update_price.saveBT
@@ -151,6 +156,36 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
 
+        productMRPTV.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            @SuppressLint("SetTextI18n")
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (product!!.mrp != productMRPTV.text.toString().trim()) {
+                    Log.e(TAG, "Product MRP Changed")
+                    productPriceChanged = true
+
+                    if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                        val pre =
+                            productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                        val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                        val percent: Int = (div * 100).toInt()
+                        percentageOffTV.text = "$percent% OFF"
+                        mrpTV.text = productMRPTV.text.toString().trim()
+                        mrpLayout.visibility = View.VISIBLE
+                    } else {
+                        mrpLayout.visibility = View.GONE
+                    }
+
+                    showSaveButton()
+                }
+            }
+        })
+
 
         backIB.setOnClickListener(this)
         oneBT.setOnClickListener(this)
@@ -168,14 +203,27 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
         saveBT.setOnClickListener(this)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun loadCategoryData() {
         productDetailsLayout.visibility = View.VISIBLE
         productNameTV.setText(product!!.name)
         productAliasNameTV.setText(product!!.local_name)
 
-        priceTV.text = product!!.rate
+        productMRPTV.setText(product!!.mrp)
         unitTV.text = product!!.unit
         descriptionTV.setText(product!!.description)
+
+        if (product!!.mrp != "" && product!!.mrp != "0" && product!!.mrp.toFloat() > product!!.rate.toFloat()) {
+            val pre =
+                product!!.mrp.toFloat() - product!!.rate.toFloat()
+            val div: Float = (pre / product!!.mrp.toFloat())
+            val percent: Int = (div * 100).toInt()
+            percentageOffTV.text = "$percent% OFF"
+            mrpTV.text = productMRPTV.text.toString().trim()
+            mrpLayout.visibility = View.VISIBLE
+        } else {
+            mrpLayout.visibility = View.GONE
+        }
 
         Log.e(TAG, "Selected Category List Updated Rate : " + product!!.updated_rate)
         if (product!!.updated_rate != null && product!!.updated_rate != "") {
@@ -185,6 +233,7 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
             Log.e(TAG, "Entered Else Condition")
             updateProductPriceET.text = product!!.rate
         }
+        priceTV.text = updateProductPriceET.text.toString().trim()
 
         showSaveButton()
     }
@@ -198,6 +247,7 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.backIB -> {
@@ -211,6 +261,7 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
             R.id.oneBT -> {
                 if (updatePriceFirstTime) {
                     updateProductPriceET.text = "1"
+                    priceTV.text = updateProductPriceET.text.toString().trim()
                     updatePriceFirstTime = false
                     productPriceChanged = true
                 } else {
@@ -221,16 +272,31 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                             updateProductPriceET.text.toString() + "1"
                         }
                         updateProductPriceET.text = price
+                        priceTV.text = updateProductPriceET.text.toString().trim()
                         productPriceChanged = true
                     } else {
                         Toast.makeText(this, "Reached Maximum Limit!", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                    val pre =
+                        productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                    val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                    val percent: Int = (div * 100).toInt()
+                    percentageOffTV.text = "$percent% OFF"
+                    mrpTV.text = productMRPTV.text.toString().trim()
+                    mrpLayout.visibility = View.VISIBLE
+                } else {
+                    mrpLayout.visibility = View.GONE
+                }
+
                 showSaveButton()
             }
             R.id.twoBT -> {
                 if (updatePriceFirstTime) {
                     updateProductPriceET.text = "2"
+                    priceTV.text = updateProductPriceET.text.toString().trim()
                     updatePriceFirstTime = false
                     productPriceChanged = true
                 } else {
@@ -241,16 +307,31 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                             updateProductPriceET.text.toString() + "2"
                         }
                         updateProductPriceET.text = price
+                        priceTV.text = updateProductPriceET.text.toString().trim()
                         productPriceChanged = true
                     } else {
                         Toast.makeText(this, "Reached Maximum Limit!", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                    val pre =
+                        productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                    val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                    val percent: Int = (div * 100).toInt()
+                    percentageOffTV.text = "$percent% OFF"
+                    mrpTV.text = productMRPTV.text.toString().trim()
+                    mrpLayout.visibility = View.VISIBLE
+                } else {
+                    mrpLayout.visibility = View.GONE
+                }
+
                 showSaveButton()
             }
             R.id.threeBT -> {
                 if (updatePriceFirstTime) {
                     updateProductPriceET.text = "3"
+                    priceTV.text = updateProductPriceET.text.toString().trim()
                     updatePriceFirstTime = false
                     productPriceChanged = true
                 } else {
@@ -261,16 +342,31 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                             updateProductPriceET.text.toString() + "3"
                         }
                         updateProductPriceET.text = price
+                        priceTV.text = updateProductPriceET.text.toString().trim()
                         productPriceChanged = true
                     } else {
                         Toast.makeText(this, "Reached Maximum Limit!", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                    val pre =
+                        productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                    val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                    val percent: Int = (div * 100).toInt()
+                    percentageOffTV.text = "$percent% OFF"
+                    mrpTV.text = productMRPTV.text.toString().trim()
+                    mrpLayout.visibility = View.VISIBLE
+                } else {
+                    mrpLayout.visibility = View.GONE
+                }
+
                 showSaveButton()
             }
             R.id.fourBT -> {
                 if (updatePriceFirstTime) {
                     updateProductPriceET.text = "4"
+                    priceTV.text = updateProductPriceET.text.toString().trim()
                     updatePriceFirstTime = false
                     productPriceChanged = true
                 } else {
@@ -281,17 +377,32 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                             updateProductPriceET.text.toString() + "4"
                         }
                         updateProductPriceET.text = price
+                        priceTV.text = updateProductPriceET.text.toString().trim()
                         productPriceChanged = true
                         showSaveButton()
                     } else {
                         Toast.makeText(this, "Reached Maximum Limit!", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                    val pre =
+                        productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                    val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                    val percent: Int = (div * 100).toInt()
+                    percentageOffTV.text = "$percent% OFF"
+                    mrpTV.text = productMRPTV.text.toString().trim()
+                    mrpLayout.visibility = View.VISIBLE
+                } else {
+                    mrpLayout.visibility = View.GONE
+                }
+
                 showSaveButton()
             }
             R.id.fiveBT -> {
                 if (updatePriceFirstTime) {
                     updateProductPriceET.text = "5"
+                    priceTV.text = updateProductPriceET.text.toString().trim()
                     updatePriceFirstTime = false
                     productPriceChanged = true
                 } else {
@@ -302,17 +413,32 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                             updateProductPriceET.text.toString() + "5"
                         }
                         updateProductPriceET.text = price
+                        priceTV.text = updateProductPriceET.text.toString().trim()
                         productPriceChanged = true
                         showSaveButton()
                     } else {
                         Toast.makeText(this, "Reached Maximum Limit!", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                    val pre =
+                        productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                    val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                    val percent: Int = (div * 100).toInt()
+                    percentageOffTV.text = "$percent% OFF"
+                    mrpTV.text = productMRPTV.text.toString().trim()
+                    mrpLayout.visibility = View.VISIBLE
+                } else {
+                    mrpLayout.visibility = View.GONE
+                }
+
                 showSaveButton()
             }
             R.id.sixBT -> {
                 if (updatePriceFirstTime) {
                     updateProductPriceET.text = "6"
+                    priceTV.text = updateProductPriceET.text.toString().trim()
                     updatePriceFirstTime = false
                     productPriceChanged = true
                 } else {
@@ -323,17 +449,32 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                             updateProductPriceET.text.toString() + "6"
                         }
                         updateProductPriceET.text = price
+                        priceTV.text = updateProductPriceET.text.toString().trim()
                         productPriceChanged = true
                         showSaveButton()
                     } else {
                         Toast.makeText(this, "Reached Maximum Limit!", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                    val pre =
+                        productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                    val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                    val percent: Int = (div * 100).toInt()
+                    percentageOffTV.text = "$percent% OFF"
+                    mrpTV.text = productMRPTV.text.toString().trim()
+                    mrpLayout.visibility = View.VISIBLE
+                } else {
+                    mrpLayout.visibility = View.GONE
+                }
+
                 showSaveButton()
             }
             R.id.sevenBT -> {
                 if (updatePriceFirstTime) {
                     updateProductPriceET.text = "7"
+                    priceTV.text = updateProductPriceET.text.toString().trim()
                     updatePriceFirstTime = false
                     productPriceChanged = true
                 } else {
@@ -344,17 +485,32 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                             updateProductPriceET.text.toString() + "7"
                         }
                         updateProductPriceET.text = price
+                        priceTV.text = updateProductPriceET.text.toString().trim()
                         productPriceChanged = true
                         showSaveButton()
                     } else {
                         Toast.makeText(this, "Reached Maximum Limit!", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                    val pre =
+                        productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                    val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                    val percent: Int = (div * 100).toInt()
+                    percentageOffTV.text = "$percent% OFF"
+                    mrpTV.text = productMRPTV.text.toString().trim()
+                    mrpLayout.visibility = View.VISIBLE
+                } else {
+                    mrpLayout.visibility = View.GONE
+                }
+
                 showSaveButton()
             }
             R.id.eightBT -> {
                 if (updatePriceFirstTime) {
                     updateProductPriceET.text = "8"
+                    priceTV.text = updateProductPriceET.text.toString().trim()
                     updatePriceFirstTime = false
                     productPriceChanged = true
                 } else {
@@ -365,17 +521,32 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                             updateProductPriceET.text.toString() + "8"
                         }
                         updateProductPriceET.text = price
+                        priceTV.text = updateProductPriceET.text.toString().trim()
                         productPriceChanged = true
                         showSaveButton()
                     } else {
                         Toast.makeText(this, "Reached Maximum Limit!", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                    val pre =
+                        productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                    val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                    val percent: Int = (div * 100).toInt()
+                    percentageOffTV.text = "$percent% OFF"
+                    mrpTV.text = productMRPTV.text.toString().trim()
+                    mrpLayout.visibility = View.VISIBLE
+                } else {
+                    mrpLayout.visibility = View.GONE
+                }
+
                 showSaveButton()
             }
             R.id.nineBT -> {
                 if (updatePriceFirstTime) {
                     updateProductPriceET.text = "9"
+                    priceTV.text = updateProductPriceET.text.toString().trim()
                     updatePriceFirstTime = false
                     productPriceChanged = true
                 } else {
@@ -386,17 +557,32 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                             updateProductPriceET.text.toString() + "9"
                         }
                         updateProductPriceET.text = price
+                        priceTV.text = updateProductPriceET.text.toString().trim()
                         productPriceChanged = true
                         showSaveButton()
                     } else {
                         Toast.makeText(this, "Reached Maximum Limit!", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                    val pre =
+                        productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                    val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                    val percent: Int = (div * 100).toInt()
+                    percentageOffTV.text = "$percent% OFF"
+                    mrpTV.text = productMRPTV.text.toString().trim()
+                    mrpLayout.visibility = View.VISIBLE
+                } else {
+                    mrpLayout.visibility = View.GONE
+                }
+
                 showSaveButton()
             }
             R.id.zeroBT -> {
                 if (updatePriceFirstTime) {
                     updateProductPriceET.text = "0"
+                    priceTV.text = updateProductPriceET.text.toString().trim()
                     updatePriceFirstTime = false
                     productPriceChanged = true
                 } else {
@@ -407,12 +593,26 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                             updateProductPriceET.text.toString() + "0"
                         }
                         updateProductPriceET.text = price
+                        priceTV.text = updateProductPriceET.text.toString().trim()
                         productPriceChanged = true
                         showSaveButton()
                     } else {
                         Toast.makeText(this, "Reached Maximum Limit!", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                    val pre =
+                        productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                    val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                    val percent: Int = (div * 100).toInt()
+                    percentageOffTV.text = "$percent% OFF"
+                    mrpTV.text = productMRPTV.text.toString().trim()
+                    mrpLayout.visibility = View.VISIBLE
+                } else {
+                    mrpLayout.visibility = View.GONE
+                }
+
                 showSaveButton()
             }
             R.id.clearBT -> {
@@ -423,11 +623,61 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                         updateProductPriceET.text = "0"
                     }
                     productPriceChanged = true
+                    updatePriceFirstTime = false
+
+                    if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                        val pre =
+                            productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                        val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                        val percent: Int = (div * 100).toInt()
+                        percentageOffTV.text = "$percent% OFF"
+                        mrpTV.text = productMRPTV.text.toString().trim()
+                        mrpLayout.visibility = View.VISIBLE
+                    } else {
+                        mrpLayout.visibility = View.GONE
+                    }
+
                     showSaveButton()
                 }
             }
             R.id.dotBT -> {
+                if (updatePriceFirstTime) {
+                    updateProductPriceET.text = "0."
+                    priceTV.text = updateProductPriceET.text.toString().trim()
+                    updatePriceFirstTime = false
+                    productPriceChanged = true
+                } else {
+                    if (updateProductPriceET.text.toString().trim().length < 5 && !updateProductPriceET.text.toString().contains(
+                            "."
+                        )
+                    ) {
+                        val price: String = if (updateProductPriceET.text == "0") {
+                            "0."
+                        } else {
+                            updateProductPriceET.text.toString() + "."
+                        }
+                        updateProductPriceET.text = price
+                        priceTV.text = updateProductPriceET.text.toString().trim()
+                        productPriceChanged = true
+                        showSaveButton()
+                    } else {
+                        Toast.makeText(this, "Reached Maximum Limit!", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
+                if (productMRPTV.text.toString().trim() != "" && productMRPTV.text.toString().trim() != "0" && productMRPTV.text.toString().trim().toFloat() > updateProductPriceET.text.toString().trim().toFloat()) {
+                    val pre =
+                        productMRPTV.text.toString().trim().toFloat() - updateProductPriceET.text.toString().trim().toFloat()
+                    val div: Float = (pre / productMRPTV.text.toString().trim().toFloat())
+                    val percent: Int = (div * 100).toInt()
+                    percentageOffTV.text = "$percent% OFF"
+                    mrpTV.text = productMRPTV.text.toString().trim()
+                    mrpLayout.visibility = View.VISIBLE
+                } else {
+                    mrpLayout.visibility = View.GONE
+                }
+
+                showSaveButton()
             }
             R.id.saveBT -> {
                 if (productPriceChanged) {
@@ -435,6 +685,7 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                     product!!.name = productNameTV.text.toString().trim()
                     product!!.local_name = productAliasNameTV.text.toString().trim()
                     product!!.description = descriptionTV.text.toString().trim()
+                    product!!.mrp = productMRPTV.text.toString().trim()
                     product!!.price_changed = true
                     saveChanges()
                 }
@@ -470,6 +721,7 @@ class SearchUpdatePriceActivity : AppCompatActivity(), View.OnClickListener {
                 obj.put("local_name", product!!.local_name)
                 obj.put("description", product!!.description)
                 obj.put("rate", product!!.updated_rate)
+                obj.put("mrp", product!!.mrp)
                 confirmArray.put(obj)
             }
 

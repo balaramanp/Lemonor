@@ -2,6 +2,7 @@ package `in`.inferon.msl.lemonor.view.activity
 
 import `in`.inferon.msl.lemonor.BuildConfig
 import `in`.inferon.msl.lemonor.R
+import `in`.inferon.msl.lemonor.model.Constants
 import `in`.inferon.msl.lemonor.model.pojo.Districts
 import `in`.inferon.msl.lemonor.repo.Repository
 import android.accounts.AccountManager
@@ -13,6 +14,7 @@ import android.content.SharedPreferences
 import android.location.Location
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -26,8 +28,15 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.facebook.FacebookSdk
+import com.facebook.appevents.AppEventsConstants
+import com.facebook.appevents.AppEventsLogger
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.common.AccountPicker
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.iid.FirebaseInstanceId
@@ -38,6 +47,7 @@ import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONObject
+import java.io.IOException
 import java.security.KeyFactory
 import java.security.spec.X509EncodedKeySpec
 import javax.crypto.Cipher
@@ -60,7 +70,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private var shared: SharedPreferences? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var fcmToken: String = ""
-    private lateinit var branchReferringParams: JSONObject
+    private var branchReferringParams: JSONObject? = null
 
     override fun onStart() {
         super.onStart()
@@ -91,6 +101,25 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_login)
 
         shared = getSharedPreferences(PREF, MODE_PRIVATE)
+        MobileAds.initialize(this) {}
+        Constants.logger = AppEventsLogger.newLogger(this)
+        FacebookSdk.setAdvertiserIDCollectionEnabled(true)
+        FacebookSdk.setAdvertiserIDCollectionEnabled(true)
+        FacebookSdk.setAutoInitEnabled(true)
+        FacebookSdk.fullyInitialize()
+        Constants.logger.logEvent("Login Activity : Entered Login Activity")
+
+        AsyncTask.execute {
+            try {
+                val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(this)
+                val adId = adInfo?.id
+                Log.e("AdID", adId.toString())
+            } catch (exception: IOException) {
+            } catch (exception: GooglePlayServicesRepairableException) {
+            } catch (exception: GooglePlayServicesNotAvailableException) {
+            }
+        }
+
 
         if (shared!!.getString("app_open_count", "") != "") {
             if (shared!!.getString("app_open_count", "") == "1") {
@@ -120,7 +149,18 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             splashLoadingLayout.visibility = View.GONE
             Toast.makeText(this, "No Internet Connection!", Toast.LENGTH_SHORT).show()
         } else {
-            init()
+            if (intent.hasExtra("from_notification")) {
+                val supid = intent.getStringExtra("supplier_id")
+                val sopName = intent.getStringExtra("shop_name")
+
+                val intent = Intent(this, PlaceOrderActivity::class.java)
+                intent.putExtra("supplier_id", supid)
+                intent.putExtra("shop_name", sopName)
+                startActivity(intent)
+                finish()
+            } else {
+                init()
+            }
         }
     }
 
@@ -167,19 +207,24 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         editor.putBoolean("typing_animation", true)
         editor.apply()
 
+
         Branch.sessionBuilder(this).withCallback { referringParams, error ->
+            Constants.logger.logEvent("Login Activity : Checking App Opened Using Branch")
             Log.e(TAG, "Branch Referring Params : $referringParams")
             if (error == null) {
                 if (referringParams!!.getBoolean("+clicked_branch_link")) {
+                    Constants.logger.logEvent("Login Activity : App Opened Using Branch Link -> Existing User")
                     branchReferringParams = referringParams
 
                     if (shared!!.getString("id", "") != "") {
                         if (referringParams.getString("seller_id") == "") {
+                            Constants.logger.logEvent("Login Activity : Branch With No Seller ID -> Navigated to Home Page")
                             val intent = Intent(this@LoginActivity, MainFragmentActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                             finish()
                         } else {
+                            Constants.logger.logEvent("Login Activity : Branch With Seller ID -> Navigated to Supplier Place Order Page")
                             val intent = Intent(this@LoginActivity, PlaceOrderActivity::class.java)
                             intent.putExtra("supplier_id", referringParams.getString("seller_id"))
                             intent.putExtra("shop_name", referringParams.getString("shop_name"))
@@ -188,6 +233,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             finish()
                         }
                     } else {
+                        Constants.logger.logEvent("Login Activity : From Branch -> Showing Login Button")
                         loginLayout.visibility = View.VISIBLE
                         registerLayout.visibility = View.INVISIBLE
                         loadingLayout.visibility = View.GONE
@@ -223,8 +269,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         obj.put("token", token)
                         obj.put("fcm_token", fcmToken)
                         repo!!.checkEmailExist(obj.toString())
+                        Constants.logger.logEvent("Login Activity : Checking Mail ID Exist or Not")
                     }
                 } else {
+                    Constants.logger.logEvent("Login Activity : Naviaged to Force Update Page")
                     val intent = Intent(this@LoginActivity, ForceUpdateActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
@@ -239,10 +287,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 loadingLayout.visibility = View.GONE
                 val jsonObject = JSONObject(it)
                 if (jsonObject.getString("status") == "not_registered") {
+                    Constants.logger.logEvent("Login Activity : Mail ID Not Registered")
 
                     loadRegisterLayout(jsonObject.getString("init_data"))
 
                 } else if (jsonObject.getString("status") == "registered") {
+                    Constants.logger.logEvent("Login Activity : Mail ID Already Exist")
                     val userData = jsonObject.getJSONObject("user_data")
                     Log.e(TAG, "User ID : " + userData.getString("id").toString())
 
@@ -293,28 +343,41 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     finish()*/
 
 
-                    if (branchReferringParams.getBoolean("+clicked_branch_link")) {
-                        if (userData.getString("id") != "") {
-                            if (branchReferringParams.getString("seller_id") == "") {
-                                val intent = Intent(this@LoginActivity, MainFragmentActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                startActivity(intent)
-                                finish()
-                            } else {
-                                val intent = Intent(this@LoginActivity, PlaceOrderActivity::class.java)
-                                intent.putExtra("supplier_id", branchReferringParams.getString("seller_id"))
-                                intent.putExtra("shop_name", branchReferringParams.getString("shop_name"))
-                                intent.putExtra("from", "login_page")
-                                startActivity(intent)
-                                finish()
+                    if (branchReferringParams != null) {
+                        if (branchReferringParams!!.getBoolean("+clicked_branch_link")) {
+                            Constants.logger.logEvent("Login Activity : Checking App Opened Using Branch")
+                            if (userData.getString("id") != "") {
+                                if (branchReferringParams!!.getString("seller_id") == "") {
+                                    Constants.logger.logEvent("Login Activity : Branch With No Seller ID -> Navigated to Home Page")
+                                    val intent = Intent(this@LoginActivity, MainFragmentActivity::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    Constants.logger.logEvent("Login Activity : Branch With Seller ID -> Navigated to Supplier Place Order Page")
+                                    val intent = Intent(this@LoginActivity, PlaceOrderActivity::class.java)
+                                    intent.putExtra("supplier_id", branchReferringParams!!.getString("seller_id"))
+                                    intent.putExtra("shop_name", branchReferringParams!!.getString("shop_name"))
+                                    intent.putExtra("from", "login_page")
+                                    startActivity(intent)
+                                    finish()
+                                }
                             }
+                        } else {
+                            Constants.logger.logEvent("Login Activity : Navigated to Home Page")
+                            val intent = Intent(this@LoginActivity, MainFragmentActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            finish()
                         }
-                    }else{
+                    } else {
+                        Constants.logger.logEvent("Login Activity : Navigated to Home Page")
                         val intent = Intent(this@LoginActivity, MainFragmentActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                         finish()
                     }
+
                 }
             }
         })
@@ -326,6 +389,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun loadWithoutBranch() {
+        Constants.logger.logEvent("Login Activity : App Opened without Branch Link")
         if (shared!!.getString("id", "") != "") {
             splashLayout.visibility = View.VISIBLE
             loadingLayout.visibility = View.GONE
@@ -333,6 +397,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             registerLayout.visibility = View.INVISIBLE
 
             Handler().postDelayed({
+                Constants.logger.logEvent("Login Activity : Navigated to Home Page")
                 val intent = Intent(this@LoginActivity, MainFragmentActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
@@ -340,6 +405,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }, 1000)
 
         } else {
+            Constants.logger.logEvent("Login Activity : Showing Login Button")
             loginLayout.visibility = View.VISIBLE
             registerLayout.visibility = View.INVISIBLE
             loadingLayout.visibility = View.GONE
@@ -371,6 +437,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                                 null
                             )
                             startActivityForResult(googlePicker, 101)
+                            Constants.logger.logEvent("Login Activity : Login Button Clicked")
                         }
 
                         override fun onAnimationStart(animation: Animation?) {
@@ -445,6 +512,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             repo!!.register(obj.toString())
                             doneBT.isClickable = false
                             repo!!.activityLogging("Register Test", obj.toString())
+                            Constants.logger.logEvent("Login Activity : Registration Page -> Register Button Clicked")
                         }
 
 
@@ -459,23 +527,34 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                                     editor.putString("id", jsonObject.getString("user_id"))
                                     editor.apply()
 
-                                    if (branchReferringParams.getBoolean("+clicked_branch_link")) {
+                                    if (branchReferringParams!!.getBoolean("+clicked_branch_link")) {
                                         if (shared!!.getString("id", "") != "") {
-                                            if (branchReferringParams.getString("seller_id") == "") {
-                                                val intent = Intent(this@LoginActivity, MainFragmentActivity::class.java)
-                                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                            if (branchReferringParams!!.getString("seller_id") == "") {
+                                                Constants.logger.logEvent("Login Activity : Registration Page -> Navigated to Home Page")
+                                                val intent =
+                                                    Intent(this@LoginActivity, MainFragmentActivity::class.java)
+                                                intent.flags =
+                                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                                 startActivity(intent)
                                                 finish()
                                             } else {
+                                                Constants.logger.logEvent("Login Activity : Registration Page -> Navigated to Place Order Page")
                                                 val intent = Intent(this@LoginActivity, PlaceOrderActivity::class.java)
-                                                intent.putExtra("supplier_id", branchReferringParams.getString("seller_id"))
-                                                intent.putExtra("shop_name", branchReferringParams.getString("shop_name"))
+                                                intent.putExtra(
+                                                    "supplier_id",
+                                                    branchReferringParams!!.getString("seller_id")
+                                                )
+                                                intent.putExtra(
+                                                    "shop_name",
+                                                    branchReferringParams!!.getString("shop_name")
+                                                )
                                                 intent.putExtra("from", "login_page")
                                                 startActivity(intent)
                                                 finish()
                                             }
                                         }
-                                    }else{
+                                    } else {
+                                        Constants.logger.logEvent("Login Activity : Registration Page -> Navigated to Home Page")
                                         val intent = Intent(this@LoginActivity, MainFragmentActivity::class.java)
                                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                         startActivity(intent)
@@ -483,10 +562,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                                     }
 
                                 } else if (jsonObject.getString("status") == "username_exists") {
+                                    Constants.logger.logEvent("Login Activity : Registration Page -> User Name Already Exists")
                                     loadingLayout.visibility = View.GONE
                                     userNameTakenTV.visibility = View.VISIBLE
                                     doneBT.isClickable = true
                                 } else if (jsonObject.getString("status") == "mobile_number_exists") {
+                                    Constants.logger.logEvent("Login Activity : Registration Page -> Mobile Number Already Exists")
                                     Toast.makeText(this, jsonObject.getString("msg"), Toast.LENGTH_SHORT).show()
                                     doneBT.isClickable = true
                                 } else if (jsonObject.getString("status") == "error") {
@@ -510,6 +591,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         Log.e(TAG, "Request code : $requestCode")
         if (requestCode == 101) {
             try {
+                Constants.logger.logEvent("Login Activity : Mail ID Selected")
                 val accountName = data!!.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
                 Log.e("onActivityResult", accountName.toString())
 
@@ -540,6 +622,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
 
     private fun loadRegisterLayout(initData: String) {
+        Constants.logger.logEvent("Login Activity : Showing User Registration Page")
         loadFusedLocation()
         loginLayout.visibility = View.INVISIBLE
         registerLayout.visibility = View.VISIBLE
@@ -918,6 +1001,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
                 if (!firstTime) {
+                    Constants.logger.logEvent("Login Activity : Registration Page -> State Selection Changed")
                     selectedState = stateList[position]
 
                     districtBasedSelectedStateList.clear()
@@ -963,6 +1047,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                Constants.logger.logEvent("Login Activity : Registration Page -> District Selection Changed")
                 selectedDistrict = districtBasedSelectedStateList[position]
                 firstTime = false
             }

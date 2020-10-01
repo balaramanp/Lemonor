@@ -3,6 +3,7 @@ package `in`.inferon.msl.lemonor.view.fragment
 import `in`.inferon.msl.lemonor.R
 import `in`.inferon.msl.lemonor.model.Constants
 import `in`.inferon.msl.lemonor.model.pojo.Order
+import `in`.inferon.msl.lemonor.model.pojo.OrderList
 import `in`.inferon.msl.lemonor.repo.Repository
 import `in`.inferon.msl.lemonor.view.activity.MainFragmentActivity
 import `in`.inferon.msl.lemonor.view.adapter.SupplierOrdersAdapter
@@ -42,10 +43,11 @@ class SupplierFragment : Fragment() {
     var supplierStatusLayout: RelativeLayout? = null
     var ordersLayout: LinearLayout? = null
     private var progressLayout: LinearLayout? = null
+    private var rvOverView: View? = null
     private val PREF = "Pref"
     private var shared: SharedPreferences? = null
-    private var ordersList = mutableListOf<MutableList<Order>>()
-    private var mainOrdersList = mutableListOf<MutableList<Order>>()
+    private var ordersList = mutableListOf<OrderList>()
+    private var mainOrdersList = mutableListOf<OrderList>()
     private var supplierOrdersAdapter: SupplierOrdersAdapter? = null
     private var currentPage = 0
     private var isLoading = false
@@ -77,6 +79,7 @@ class SupplierFragment : Fragment() {
         supplierStatusLayout = view.findViewById(R.id.supplierStatusLayout) as RelativeLayout
         ordersLayout = view.findViewById(R.id.ordersLayout) as LinearLayout
         progressLayout = view.findViewById(R.id.progressLayout) as LinearLayout
+        rvOverView = view.findViewById(R.id.rvOverView) as View
 
         val connectivityManager = context!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
@@ -127,7 +130,7 @@ class SupplierFragment : Fragment() {
                     ordersList =
                         Gson().fromJson(
                             ordersArray.toString(),
-                            object : TypeToken<MutableList<MutableList<Order>>>() {}.type
+                            object : TypeToken<MutableList<OrderList>>() {}.type
                         )
 
                     mainOrdersList.addAll(ordersList)
@@ -225,12 +228,14 @@ class SupplierFragment : Fragment() {
     private val showProgressBar = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             progressLayout!!.visibility = View.VISIBLE
+            rvOverView!!.visibility = View.VISIBLE
         }
     }
 
     private val hideProgressBar = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             progressLayout!!.visibility = View.GONE
+            rvOverView!!.visibility = View.GONE
         }
     }
 

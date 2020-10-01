@@ -3,6 +3,7 @@ package `in`.inferon.msl.lemonor.view.activity
 import `in`.inferon.msl.lemonor.R
 import `in`.inferon.msl.lemonor.model.Constants
 import `in`.inferon.msl.lemonor.model.pojo.Order
+import `in`.inferon.msl.lemonor.model.pojo.OrderList
 import `in`.inferon.msl.lemonor.repo.Repository
 import `in`.inferon.msl.lemonor.view.adapter.ClientOrdersAdapter
 import android.annotation.SuppressLint
@@ -30,8 +31,8 @@ class MyOrdersActivity : AppCompatActivity() {
     private var repo: Repository? = null
     private val PREF = "Pref"
     private var shared: SharedPreferences? = null
-    private var ordersList = mutableListOf<MutableList<Order>>()
-    private var mainOrdersList = mutableListOf<MutableList<Order>>()
+    private var ordersList = mutableListOf<OrderList>()
+    private var mainOrdersList = mutableListOf<OrderList>()
     private var clientOrdersAdapter: ClientOrdersAdapter? = null
     private var currentPage = 0
     private var isLoading = false
@@ -87,7 +88,7 @@ class MyOrdersActivity : AppCompatActivity() {
                     ordersList =
                         Gson().fromJson(
                             ordersArray.toString(),
-                            object : TypeToken<MutableList<MutableList<Order>>>() {}.type
+                            object : TypeToken<MutableList<OrderList>>() {}.type
                         )
                     mainOrdersList.addAll(ordersList)
 

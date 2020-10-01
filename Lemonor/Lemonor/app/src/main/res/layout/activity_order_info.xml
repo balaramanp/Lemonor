@@ -159,6 +159,81 @@
                             android:visibility="invisible"
                             tools:ignore="RtlSymmetry"/>
                 </LinearLayout>
+
+                <LinearLayout
+                        android:id="@+id/discountLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/pad_5">
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:id="@+id/discountTxtTV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/orange"
+                            android:gravity="end"
+                            android:layout_weight="1"/>
+                    <in.inferon.msl.lemonor.view.ui.BoldTextView
+                            android:id="@+id/discountValueTV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/orange"
+                            android:gravity="end"
+                            android:layout_weight="2"/>
+                    <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="invisible">
+                        <ImageView
+                                android:layout_width="@dimen/pad_30"
+                                android:layout_height="@dimen/pad_20"
+                                android:src="@drawable/ic_close_bright_18dp"
+                                android:contentDescription="@string/app_name"
+                                android:scaleType="centerInside"
+                                android:adjustViewBounds="true"
+                                android:layout_centerInParent="true"/>
+                    </RelativeLayout>
+                </LinearLayout>
+
+
+                <LinearLayout
+                        android:id="@+id/discountTotalLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/pad_5">
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/total"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/orange"
+                            android:gravity="end"
+                            android:layout_weight="1"/>
+                    <in.inferon.msl.lemonor.view.ui.BoldTextView
+                            android:id="@+id/afterDiscountValueTV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/orange"
+                            android:gravity="end"
+                            android:layout_weight="2"/>
+                    <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="invisible">
+                        <ImageView
+                                android:layout_width="@dimen/pad_30"
+                                android:layout_height="@dimen/pad_20"
+                                android:src="@drawable/ic_close_bright_18dp"
+                                android:contentDescription="@string/app_name"
+                                android:scaleType="centerInside"
+                                android:adjustViewBounds="true"
+                                android:layout_centerInParent="true"/>
+                    </RelativeLayout>
+                </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

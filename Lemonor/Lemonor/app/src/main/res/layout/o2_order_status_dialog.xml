@@ -10,9 +10,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <LinearLayout
+        <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/pad_40"
                 android:orientation="horizontal"
                 android:background="@color/colorPrimary">
             <in.inferon.msl.lemonor.view.ui.BoldTextView
@@ -24,7 +24,18 @@
                     android:textColor="@color/white"
                     android:padding="@dimen/pad_10"
                     android:gravity="center"/>
-        </LinearLayout>
+
+            <ImageButton
+                    android:id="@+id/closeIB"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="@dimen/pad_40"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_close_white_18dp"
+                    android:contentDescription="@string/app_name"
+                    android:adjustViewBounds="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
 
         <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"

@@ -86,7 +86,9 @@ class MainFragmentActivity : AppCompatActivity(), View.OnClickListener, OnMapRea
         loadGPS()
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun init() {
+        Constants.logger.logEvent("Home Activity : Entered Home Activity")
         Log.e(TAG, "Entered Init")
         Constants.context = this
         repo = Repository()

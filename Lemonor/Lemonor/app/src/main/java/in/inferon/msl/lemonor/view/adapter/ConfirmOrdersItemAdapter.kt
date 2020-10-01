@@ -30,9 +30,20 @@ class ConfirmOrdersItemAdapter(
         holder.productNameTV.text = items[position].name
         holder.productQtyTV.text = items[position].qty
         holder.productUnitTV.text = items[position].unit
-        holder.productRateTV.text = "(" + doubleToStringNoDecimal(items[position].rate.toDouble()) + ")"
-        val price = items[position].qty.toInt() * items[position].rate.toFloat()
-        holder.productPriceTV.text = doubleToStringNoDecimal(price.toDouble())
+        if (items[position].discount != "" && items[position].discount != "0") {
+            val pre = items[position].rate.toFloat() / 100
+            val percentAmount: Float = (pre * items[position].discount.toFloat())
+            val ourPrice: Float = (items[position].rate.toFloat() - percentAmount)
+            holder.productRateTV.text = "(" + doubleToStringSingleDecimal(ourPrice.toDouble()) + ")"
+
+            val price = items[position].qty.toInt() * ourPrice
+            holder.productPriceTV.text = doubleToStringNoDecimal(price.toDouble())
+        } else {
+            holder.productRateTV.text = "(" + doubleToStringSingleDecimal(items[position].rate.toDouble()) + ")"
+
+            val price = items[position].qty.toInt() * items[position].rate.toFloat()
+            holder.productPriceTV.text = doubleToStringNoDecimal(price.toDouble())
+        }
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -43,9 +54,15 @@ class ConfirmOrdersItemAdapter(
         val productPriceTV = view.productPriceTV!!
     }
 
-    private fun doubleToStringNoDecimal(d: Double): String? {
+    private fun doubleToStringSingleDecimal(d: Double): String? {
         val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
         formatter.applyPattern("#,##,###.##")
+        return formatter.format(d)
+    }
+
+    private fun doubleToStringNoDecimal(d: Double): String? {
+        val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
+        formatter.applyPattern("#,##,###.00")
         return formatter.format(d)
     }
 }

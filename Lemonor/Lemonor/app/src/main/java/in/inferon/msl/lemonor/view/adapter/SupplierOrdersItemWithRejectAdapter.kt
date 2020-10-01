@@ -66,7 +66,7 @@ class SupplierOrdersItemWithRejectAdapter(
             holder.productQtyTV.text = items[position].qty
             holder.productUnitTV.text = items[position].unit
             holder.productRateTV.text = "(" + doubleToStringNoDecimal(items[position].rate.toDouble()) + ")"
-            holder.productPriceTV.text = doubleToStringNoDecimal(items[position].price.toDouble())
+            holder.productPriceTV.text = doubleToStringTwoDecimal(items[position].price.toDouble())
 
             if (items[position].order_status == "open") {
                 holder.statusTV.text = "Waiting for Seller apporval."
@@ -118,7 +118,12 @@ class SupplierOrdersItemWithRejectAdapter(
             holder.o2Layout.visibility = View.VISIBLE
             holder.itemLayout.visibility = View.GONE
             holder.o2ProductTV.text = items[position].description
-            holder.o2ProductPriceTV.text = doubleToStringNoDecimal(items[position].price.toDouble())
+            if (items[position].price.toFloat() == 0f){
+                holder.o2ProductPriceTV.visibility = View.INVISIBLE
+            }else{
+                holder.o2ProductPriceTV.visibility = View.VISIBLE
+                holder.o2ProductPriceTV.text = doubleToStringTwoDecimal(items[position].price.toDouble())
+            }
 
             if (items[position].order_status == "open") {
                 holder.statusTV.text = "Waiting for Seller apporval."
@@ -198,7 +203,7 @@ class SupplierOrdersItemWithRejectAdapter(
                 productNameTV.text = "You are about to reject the order for " + items[position].description
             } else {
                 productNameTV.text = "You are about to reject the order for " + items[position].product_name +
-                        " " + items[position].qty + items[position].unit
+                        " " + items[position].qty + " ( " + items[position].unit + " )"
             }
 
 
@@ -504,6 +509,12 @@ class SupplierOrdersItemWithRejectAdapter(
     private fun doubleToStringNoDecimal(d: Double): String? {
         val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
         formatter.applyPattern("#,##,###.##")
+        return formatter.format(d)
+    }
+
+    private fun doubleToStringTwoDecimal(d: Double): String? {
+        val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
+        formatter.applyPattern("#,##,###.00")
         return formatter.format(d)
     }
 

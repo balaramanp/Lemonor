@@ -1317,6 +1317,30 @@ class Repository {
         })
     }
 
+
+    var getSlotForOrderDelivery = MutableLiveData<String>()
+    fun getSlotForOrderDelivery(data: String) {
+        Utils.getRetrofit().getSlotForOrderDelivery(data).enqueue(object : Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+            }
+
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    val responseString = response.body()!!.string()
+                    Log.e(TAG, "Get Slot For Order Delivery Response : $responseString")
+                    getSlotForOrderDelivery.postValue(responseString)
+                } else {
+                    val errorBody = response.errorBody()
+                    activityLogging(
+                        "getSlotForOrderDelivery",
+                        errorBody!!.string() + " Error Raw : ${response.raw()}"
+                    )
+                }
+            }
+        })
+    }
+
     fun activityLogging(module: String, data: String) {
         val versionName = BuildConfig.VERSION_NAME
         Utils.getRetrofitText().activityLogging(versionName, module, data).enqueue(object : Callback<ResponseBody> {

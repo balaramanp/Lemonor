@@ -58,7 +58,7 @@ class OrdersItemAdapter(
             holder.productQtyTV.text = items[position].qty
             holder.productUnitTV.text = items[position].unit
             holder.productRateTV.text = "(" + doubleToStringNoDecimal(items[position].rate.toDouble()) + ")"
-            holder.productPriceTV.text = doubleToStringNoDecimal(items[position].price.toDouble())
+            holder.productPriceTV.text = doubleToStringTwoDecimal(items[position].price.toDouble())
         } else {
             holder.itemLayout.visibility = View.GONE
             holder.o2Layout.visibility = View.VISIBLE
@@ -210,6 +210,7 @@ class OrdersItemAdapter(
             productDescriptionTV.visibility = View.GONE
 
             cancelBT.setOnClickListener {
+                hideProgressBar()
                 dialog.dismiss()
             }
 
@@ -284,6 +285,12 @@ class OrdersItemAdapter(
     private fun doubleToStringNoDecimal(d: Double): String? {
         val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
         formatter.applyPattern("#,##,###.##")
+        return formatter.format(d)
+    }
+
+    private fun doubleToStringTwoDecimal(d: Double): String? {
+        val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
+        formatter.applyPattern("#,##,###.00")
         return formatter.format(d)
     }
 

@@ -64,33 +64,64 @@
                         android:textColor="@color/buttonColor"
                         android:layout_marginTop="@dimen/pad_20"
                         android:gravity="center"/>
+
+                <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="@dimen/pad_10"
+                        android:layout_marginTop="@dimen/pad_20"
+                        android:layout_marginLeft="@dimen/pad_10"
+                        android:layout_marginRight="@dimen/pad_10"
+                        android:layout_marginBottom="@dimen/pad_10">
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/pad_10">
+                        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/delivery_time"
+                                android:textSize="@dimen/text_20sp"
+                                android:textColor="@color/black"/>
+
+                        <in.inferon.msl.lemonor.view.ui.LightTextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Express Delivery ( Within 2 Hrs - Rs.9/- )"
+                                android:textSize="@dimen/text_14sp"
+                                android:textColor="@color/black"
+                                android:layout_marginTop="@dimen/pad_10"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="@dimen/pad_10">
-                    <in.inferon.msl.lemonor.view.ui.BoldTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/addresses"
-                            android:textSize="@dimen/text_22sp"
-                            android:textColor="@color/black"
-                            android:layout_marginTop="@dimen/pad_20"/>
+                        android:orientation="vertical">
 
                     <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:cardCornerRadius="@dimen/pad_10"
-                            android:layout_marginTop="@dimen/pad_20">
+                            android:layout_margin="@dimen/pad_10">
                         <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
                                 android:padding="@dimen/pad_10">
+                            <in.inferon.msl.lemonor.view.ui.BoldTextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/addresses"
+                                    android:textSize="@dimen/text_20sp"
+                                    android:textColor="@color/black"/>
+
                             <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:orientation="horizontal">
+                                    android:orientation="horizontal"
+                                    android:layout_marginTop="@dimen/pad_10">
                                 <in.inferon.msl.lemonor.view.ui.BoldTextView
                                         android:id="@+id/firstNameTV"
                                         android:layout_width="match_parent"
@@ -256,25 +287,24 @@
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <in.inferon.msl.lemonor.view.ui.BoldTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/order_details"
-                            android:textSize="@dimen/text_22sp"
-                            android:textColor="@color/black"
-                            android:layout_marginTop="@dimen/pad_30"/>
 
                     <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:cardCornerRadius="@dimen/pad_10"
-                            android:layout_marginTop="@dimen/pad_20"
-                            android:layout_marginBottom="@dimen/pad_20">
+                            android:layout_margin="@dimen/pad_10">
                         <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
                                 android:padding="@dimen/pad_10">
+                            <in.inferon.msl.lemonor.view.ui.BoldTextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/order_details"
+                                    android:textSize="@dimen/text_20sp"
+                                    android:textColor="@color/black"/>
+
                             <in.inferon.msl.lemonor.view.ui.BoldTextView
                                     android:id="@+id/titleTV"
                                     android:layout_width="match_parent"
@@ -284,7 +314,8 @@
                                     android:transitionName="shopName"
                                     android:drawableLeft="@drawable/ic_store_green_24dp"
                                     android:drawableStart="@drawable/ic_store_green_24dp"
-                                    android:drawablePadding="@dimen/pad_10"/>
+                                    android:drawablePadding="@dimen/pad_10"
+                                    android:layout_marginTop="@dimen/pad_10"/>
 
                             <in.inferon.msl.lemonor.view.ui.LightTextView
                                     android:id="@+id/o2DescriptionTV"
@@ -343,6 +374,80 @@
                                         android:transitionName="totalPrice"
                                         android:gravity="end"
                                         android:layout_weight="1"/>
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                    android:id="@+id/discountLayout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:padding="@dimen/pad_5">
+                                <in.inferon.msl.lemonor.view.ui.LightTextView
+                                        android:id="@+id/discountTxtTV"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="@dimen/text_14sp"
+                                        android:textColor="@color/orange"
+                                        android:gravity="end"
+                                        android:layout_weight="1"/>
+                                <in.inferon.msl.lemonor.view.ui.BoldTextView
+                                        android:id="@+id/discountValueTV"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="@dimen/text_14sp"
+                                        android:textColor="@color/orange"
+                                        android:gravity="end"
+                                        android:layout_weight="2"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                    android:id="@+id/expressDeliveryLayout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:padding="@dimen/pad_5">
+                                <in.inferon.msl.lemonor.view.ui.LightTextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/express_delivery"
+                                        android:textSize="@dimen/text_14sp"
+                                        android:textColor="@color/orange"
+                                        android:gravity="end"
+                                        android:layout_weight="1"/>
+                                <in.inferon.msl.lemonor.view.ui.BoldTextView
+                                        android:id="@+id/expressDeliveryValueTV"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="9"
+                                        android:textSize="@dimen/text_14sp"
+                                        android:textColor="@color/orange"
+                                        android:gravity="end"
+                                        android:layout_weight="2"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                    android:id="@+id/discountTotalLayout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:padding="@dimen/pad_5">
+                                <in.inferon.msl.lemonor.view.ui.LightTextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/total"
+                                        android:textSize="@dimen/text_14sp"
+                                        android:textColor="@color/orange"
+                                        android:gravity="end"
+                                        android:layout_weight="1"/>
+                                <in.inferon.msl.lemonor.view.ui.BoldTextView
+                                        android:id="@+id/afterDiscountValueTV"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="@dimen/text_14sp"
+                                        android:textColor="@color/orange"
+                                        android:gravity="end"
+                                        android:layout_weight="2"/>
                             </LinearLayout>
                         </LinearLayout>
 

@@ -11,14 +11,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <in.inferon.msl.lemonor.view.ui.BoldTextView
+        <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:text="@string/delivery_addresses"
-                android:textSize="@dimen/text_18sp"
-                android:textColor="@color/white"
-                android:background="@color/colorPrimary"
-                android:gravity="center"/>
+                android:layout_height="wrap_content">
+            <in.inferon.msl.lemonor.view.ui.BoldTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:text="@string/delivery_addresses"
+                    android:textSize="@dimen/text_18sp"
+                    android:textColor="@color/white"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"/>
+
+            <ImageButton
+                    android:id="@+id/closeIB"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="@dimen/pad_40"
+                    android:layout_height="?attr/actionBarSize"
+                    android:src="@drawable/ic_close_white_18dp"
+                    android:contentDescription="@string/app_name"
+                    android:adjustViewBounds="true"
+                    android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -70,7 +84,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_margin="@dimen/pad_20">
+                    android:layout_margin="@dimen/pad_20"
+                    android:visibility="gone">
                 <in.inferon.msl.lemonor.view.ui.LightButton
                         android:id="@+id/cancelBT"
                         style="?attr/borderlessButtonStyle"

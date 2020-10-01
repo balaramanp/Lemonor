@@ -2,20 +2,20 @@ package `in`.inferon.msl.lemonor.view.activity
 
 import `in`.inferon.msl.lemonor.R
 import `in`.inferon.msl.lemonor.model.pojo.Address
+import `in`.inferon.msl.lemonor.model.pojo.MajorCategory
 import `in`.inferon.msl.lemonor.model.pojo.Products
+import `in`.inferon.msl.lemonor.model.pojo.Slot
 import `in`.inferon.msl.lemonor.repo.Repository
+import `in`.inferon.msl.lemonor.view.adapter.AddressesSelectionAdapter
 import `in`.inferon.msl.lemonor.view.adapter.ConfirmOrdersItemAdapter
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +24,7 @@ import android.view.Window
 import android.widget.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.razorpay.Checkout
@@ -47,6 +48,7 @@ class OrderConfirmationActivity : AppCompatActivity(), View.OnClickListener, Pay
     private var o2 = ""
     private var products = ""
     private var selectedAddressID = ""
+    private var supplierDiscount = ""
     private var productsList = mutableListOf<Products>()
     private val confirmArray = JSONArray()
     private val confirmList = mutableListOf<Products>()
@@ -61,15 +63,35 @@ class OrderConfirmationActivity : AppCompatActivity(), View.OnClickListener, Pay
     private lateinit var address: Address
     private lateinit var dialog: Dialog
     private var transactionRefID: String = ""
+    private var addresses = mutableListOf<Address>()
+    private var addressSelectionAdapter: AddressesSelectionAdapter? = null
+    private var addressSelectionDialogVisible = false
+    private var addressesRV: RecyclerView? = null
+    private var selectedAddressPosition = 0
+    private lateinit var addressDialog: Dialog
+    private var slots = mutableListOf<Slot>()
+
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_order_confirmation)
 
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(addEditAddress, IntentFilter("AddEditAddress"))
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(selectedAddress, IntentFilter("SelectedAddress"))
+
         repo = Repository()
         shared = getSharedPreferences(PREF, MODE_PRIVATE)
 
+        progressLayout.visibility = View.VISIBLE
+        val obj = JSONObject()
+        obj.put("user_id", shared!!.getString("id", ""))
+        repo!!.getUserProfileByUserID(obj.toString())
+
+        val jobj = JSONObject()
+        repo!!.getSlotForOrderDelivery(jobj.toString())
 
         var randString = ""
         for (i in 0..11) {
@@ -82,16 +104,17 @@ class OrderConfirmationActivity : AppCompatActivity(), View.OnClickListener, Pay
         supplierID = intent.getStringExtra("supplier_id")!!
         shopName = intent.getStringExtra("shop_name")!!
         o2 = intent.getStringExtra("o2")!!
-        selectedAddressID = intent.getStringExtra("selectedAddressID")!!
+//        selectedAddressID = intent.getStringExtra("selectedAddressID")!!
         products = intent.getStringExtra("productsList")!!
+        supplierDiscount = intent.getStringExtra("supplierDiscount")!!
         productsList = Gson().fromJson(products, object : TypeToken<MutableList<Products>>() {}.type)
 
-        if (selectedAddressID != "") {
+        /*if (selectedAddressID != "") {
             address = Gson().fromJson(
                 intent.getStringExtra("selectedAddress"),
                 object : TypeToken<Address>() {}.type
             )
-        }
+        }*/
 
         if (o2.length >= 3) {
             val obj = JSONObject()
@@ -125,7 +148,14 @@ class OrderConfirmationActivity : AppCompatActivity(), View.OnClickListener, Pay
                 confirmArray.put(obj)
                 confirmList.add(i)
 
-                total += i.qty.toInt() * i.rate.toFloat()
+                if (i.discount != "" && i.discount != "0") {
+                    val pre = i.rate.toFloat() / 100
+                    val percentAmount: Float = (pre * i.discount.toFloat())
+                    val ourPrice: Float = (i.rate.toFloat() - percentAmount)
+                    total += i.qty.toInt() * ourPrice
+                } else {
+                    total += i.qty.toInt() * i.rate.toFloat()
+                }
                 itemCount += 1
             }
         }
@@ -143,11 +173,95 @@ class OrderConfirmationActivity : AppCompatActivity(), View.OnClickListener, Pay
             itemTV.text = "Item"
         }
         totalTV.text = getString(R.string.Rs) + " " + doubleToStringNoDecimal(total.toDouble())
+        if (supplierDiscount != "" && supplierDiscount != "0") {
+            discountLayout.visibility = View.VISIBLE
+            discountTotalLayout.visibility = View.VISIBLE
+            discountTxtTV.text = "Extra Discount $supplierDiscount%"
+
+            val pre = total / 100
+            val percentAmount: Float = (pre * supplierDiscount.toFloat())
+            val ourPrice: Float = (total - percentAmount)
+            discountValueTV.text = "- " + doubleToStringNoDecimal(percentAmount.toDouble())
+
+            afterDiscountValueTV.text = getString(R.string.Rs) + " " + doubleToStringNoDecimal(ourPrice.toDouble())
+        } else {
+            discountLayout.visibility = View.GONE
+            discountTotalLayout.visibility = View.GONE
+        }
         recyclerView.layoutManager = LinearLayoutManager(this)
         val confirmOrdersItemAdapter = ConfirmOrdersItemAdapter(this, confirmList)
         recyclerView.adapter = confirmOrdersItemAdapter
         recyclerView.isNestedScrollingEnabled = false
         recyclerView.setHasFixedSize(true)
+
+        repo!!.getUserProfileByUserID.observe(this, androidx.lifecycle.Observer {
+            progressLayout.visibility = View.GONE
+            val jsonObject = JSONObject(it)
+            addresses =
+                Gson().fromJson(
+                    jsonObject.getString("addresses"),
+                    object : TypeToken<MutableList<Address>>() {}.type
+                )
+
+            if (addressSelectionDialogVisible) {
+                addressesRV!!.layoutManager = LinearLayoutManager(this)
+                addressSelectionAdapter =
+                    AddressesSelectionAdapter(this@OrderConfirmationActivity, addresses, this@OrderConfirmationActivity)
+                addressesRV!!.adapter = addressSelectionAdapter
+                /*addressDialog.dismiss()
+                showAddressSelectionDialog()*/
+            } else {
+                if (addresses.size > 0) {
+                    selectedAddressID = "0"
+                    address = addresses[0]
+
+                    addAddressBT.visibility = View.GONE
+                    orderButtonLayout.visibility = View.VISIBLE
+                    addressLayout.visibility = View.VISIBLE
+                    firstNameTV.text = addresses[0].first_name + " " + addresses[0].last_name
+                    /*if (addresses[0].last_name != "") {
+                        lastNameTV.visibility = View.VISIBLE
+                        lastNameTV.text = addresses[0].last_name
+                    } else {
+                        lastNameTV.visibility = View.GONE
+                    }*/
+                    phone1TV.text = addresses[0].phone_no1
+                    if (addresses[0].phone_no2 != "") {
+                        phone2TV.visibility = View.VISIBLE
+                        phone2TV.text = addresses[0].phone_no2
+                    } else {
+                        phone2TV.visibility = View.GONE
+                    }
+                    address1TV.text = addresses[0].address_line_1
+                    if (addresses[0].address_line_2 != "") {
+                        address2TV.visibility = View.VISIBLE
+                        address2TV.text = addresses[0].address_line_2
+                    } else {
+                        address2TV.visibility = View.GONE
+                    }
+                    if (addresses[0].landmark != "") {
+                        landmarkTV.visibility = View.VISIBLE
+                        landmarkTV.text = addresses[0].landmark
+                    } else {
+                        landmarkTV.visibility = View.GONE
+                    }
+                    pincodeTV.text = addresses[0].zip_code
+                    cityTV.text = addresses[0].city
+                    districtTV.text = addresses[0].district
+                    stateTV.text = addresses[0].state
+                    countryTV.text = addresses[0].country
+                    if (addresses[0].default == "1") {
+                        defaultAddressTV.visibility = View.VISIBLE
+                    } else {
+                        defaultAddressTV.visibility = View.GONE
+                    }
+                } else {
+                    addressLayout.visibility = View.GONE
+                    addAddressBT.visibility = View.VISIBLE
+                    orderButtonLayout.visibility = View.GONE
+                }
+            }
+        })
 
         repo!!.placeAnOrder.observe(this, androidx.lifecycle.Observer {
             run {
@@ -161,6 +275,7 @@ class OrderConfirmationActivity : AppCompatActivity(), View.OnClickListener, Pay
                         intent.putExtra("products", products)
                         intent.putExtra("o2", o2)
                         intent.putExtra("shop_name", shopName)
+                        intent.putExtra("supplierDiscount", supplierDiscount)
                         startActivity(intent)
                         finish()
                     } else {
@@ -173,7 +288,28 @@ class OrderConfirmationActivity : AppCompatActivity(), View.OnClickListener, Pay
             }
         })
 
+
+        repo!!.getSlotForOrderDelivery.observe(this, androidx.lifecycle.Observer {
+            val jsonObject = JSONObject(it)
+            slots =
+                Gson().fromJson(
+                    jsonObject.getString("slots"),
+                    object : TypeToken<MutableList<Slot>>() {}.type
+                )
+            /*for (i in slots){
+                if (i.is_selected){
+                    deliveryTimeTV.text = i.value + " " + i.date_text
+                }
+            }*/
+        })
+
+        deliveryTimeRG.setOnCheckedChangeListener { group, i ->
+            Log.e(TAG, "Selected RB : $i")
+        }
+
         backIB.setOnClickListener(this)
+        changeNewAddressLayout.setOnClickListener(this)
+        addAddressBT.setOnClickListener(this)
         cancelBT.setOnClickListener(this)
         okBT.setOnClickListener(this)
     }
@@ -182,6 +318,14 @@ class OrderConfirmationActivity : AppCompatActivity(), View.OnClickListener, Pay
         when (v!!.id) {
             R.id.backIB -> {
                 super.onBackPressed()
+            }
+            R.id.changeNewAddressLayout -> {
+                showAddressSelectionDialog()
+            }
+            R.id.addAddressBT -> {
+                val intent = Intent(this@OrderConfirmationActivity, AddAddressActivity::class.java)
+                intent.putExtra("from", "add")
+                startActivity(intent)
             }
             R.id.cancelBT -> {
                 super.onBackPressed()
@@ -324,7 +468,7 @@ class OrderConfirmationActivity : AppCompatActivity(), View.OnClickListener, Pay
 
     private fun doubleToStringNoDecimal(d: Double): String? {
         val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
-        formatter.applyPattern("#,##,###.##")
+        formatter.applyPattern("#,##,###.00")
         return formatter.format(d)
     }
 
@@ -488,6 +632,129 @@ class OrderConfirmationActivity : AppCompatActivity(), View.OnClickListener, Pay
 
         } catch (e: Exception) {
             Log.e(TAG, "Exception in onPaymentSuccess", e)
+        }
+    }
+
+
+    private fun showAddressSelectionDialog() {
+        addressSelectionDialogVisible = true
+        selectedAddressID = ""
+
+        addressDialog = Dialog(this)
+        addressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        addressDialog.setContentView(R.layout.address_selection_dialog)
+
+        val addNewAddressLayout = addressDialog.findViewById(R.id.addNewAddressLayout) as TextView
+        val cancelBT = addressDialog.findViewById(R.id.cancelBT) as Button
+        val okBT = addressDialog.findViewById(R.id.okBT) as Button
+        val closeIB = addressDialog.findViewById(R.id.closeIB) as ImageButton
+        addressesRV = addressDialog.findViewById(R.id.addressesRV) as RecyclerView
+
+        addressesRV!!.layoutManager = LinearLayoutManager(this)
+        addressSelectionAdapter = AddressesSelectionAdapter(this, addresses, this)
+        addressesRV!!.adapter = addressSelectionAdapter
+
+        addNewAddressLayout.setOnClickListener {
+            addressSelectionDialogVisible = true
+            val intent = Intent(this@OrderConfirmationActivity, AddAddressActivity::class.java)
+            intent.putExtra("from", "add")
+            startActivity(intent)
+        }
+
+        closeIB.setOnClickListener {
+            selectedAddressID = ""
+            addressSelectionDialogVisible = false
+            addressDialog.dismiss()
+        }
+
+        cancelBT.setOnClickListener {
+            selectedAddressID = ""
+            addressSelectionDialogVisible = false
+            addressDialog.dismiss()
+        }
+
+        okBT.setOnClickListener {
+            Log.e(TAG, "Selected Address ID : $selectedAddressID")
+            if (selectedAddressID != "") {
+                addressSelectionDialogVisible = false
+            } else {
+                Toast.makeText(this@OrderConfirmationActivity, "Please Select Address!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        addressDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        addressDialog.setCanceledOnTouchOutside(false)
+        addressDialog.show()
+        val window = addressDialog.window!!
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+    }
+
+    private val addEditAddress = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            progressLayout.visibility = View.VISIBLE
+            val obj = JSONObject()
+            obj.put("user_id", shared!!.getString("id", ""))
+            repo!!.getUserProfileByUserID(obj.toString())
+        }
+    }
+
+    private val selectedAddress = object : BroadcastReceiver() {
+        @SuppressLint("SetTextI18n")
+        override fun onReceive(context: Context, intent: Intent) {
+            try {
+                Log.e(TAG, "Address List Size  : " + addresses.size)
+                Log.e(TAG, "Address Position  : " + intent.getIntExtra("position", 0))
+                selectedAddressPosition = intent.getIntExtra("position", 0)
+                selectedAddressID = addresses[intent.getIntExtra("position", 0)].id
+                address = addresses[selectedAddressPosition]
+
+                runOnUiThread {
+                    addressDialog.dismiss()
+                    addAddressBT.visibility = View.GONE
+                    orderButtonLayout.visibility = View.VISIBLE
+                    addressLayout.visibility = View.VISIBLE
+                    firstNameTV.text =
+                        addresses[selectedAddressPosition].first_name + " " + addresses[selectedAddressPosition].last_name
+                    /*if (addresses[selectedAddressPosition].last_name != "") {
+                        lastNameTV.visibility = View.VISIBLE
+                        lastNameTV.text = addresses[selectedAddressPosition].last_name
+                    } else {
+                        lastNameTV.visibility = View.GONE
+                    }*/
+                    phone1TV.text = addresses[selectedAddressPosition].phone_no1
+                    if (addresses[selectedAddressPosition].phone_no2 != "") {
+                        phone2TV.visibility = View.VISIBLE
+                        phone2TV.text = addresses[selectedAddressPosition].phone_no2
+                    } else {
+                        phone2TV.visibility = View.GONE
+                    }
+                    address1TV.text = addresses[selectedAddressPosition].address_line_1
+                    if (addresses[selectedAddressPosition].address_line_2 != "") {
+                        address2TV.visibility = View.VISIBLE
+                        address2TV.text = addresses[selectedAddressPosition].address_line_2
+                    } else {
+                        address2TV.visibility = View.GONE
+                    }
+                    if (addresses[selectedAddressPosition].landmark != "") {
+                        landmarkTV.visibility = View.VISIBLE
+                        landmarkTV.text = addresses[selectedAddressPosition].landmark
+                    } else {
+                        landmarkTV.visibility = View.GONE
+                    }
+                    pincodeTV.text = addresses[selectedAddressPosition].zip_code
+                    cityTV.text = addresses[selectedAddressPosition].city
+                    districtTV.text = addresses[selectedAddressPosition].district
+                    stateTV.text = addresses[selectedAddressPosition].state
+                    countryTV.text = addresses[selectedAddressPosition].country
+                    if (addresses[selectedAddressPosition].default == "1") {
+                        defaultAddressTV.visibility = View.VISIBLE
+                    } else {
+                        defaultAddressTV.visibility = View.GONE
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

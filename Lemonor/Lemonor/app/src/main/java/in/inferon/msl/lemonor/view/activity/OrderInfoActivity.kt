@@ -1,6 +1,8 @@
 package `in`.inferon.msl.lemonor.view.activity
 
 import `in`.inferon.msl.lemonor.R
+import `in`.inferon.msl.lemonor.model.Constants
+import `in`.inferon.msl.lemonor.model.Constants.context
 import `in`.inferon.msl.lemonor.model.Utils
 import `in`.inferon.msl.lemonor.model.pojo.Order
 import `in`.inferon.msl.lemonor.repo.Repository
@@ -48,6 +50,7 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
 
     private val TAG = OrderInfoActivity::class.java.simpleName
     private var orderData = ""
+    private var supplierDiscount = ""
     private var order = mutableListOf<Order>()
     private var totPrice = 0f
     private var itemCount = 0
@@ -80,8 +83,9 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                 acceptCancelLayout.visibility = View.VISIBLE
             }
 
-            orderData = intent.getStringExtra("data")
+            orderData = intent.getStringExtra("data")!!
             Log.e(TAG, "Received Data : $orderData")
+            supplierDiscount = intent.getStringExtra("supplierDiscount")!!
 
             order = Gson().fromJson(orderData, object : TypeToken<MutableList<Order>>() {}.type)
             Log.e(TAG, "Received Order Data : " + order[0].token_number)
@@ -107,10 +111,12 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
             }
 
         } else if (from == "live") {
-            orderData = intent.getStringExtra("data")
+            orderData = intent.getStringExtra("data")!!
             Log.e(TAG, "Received Data : $orderData")
+            Log.e(TAG,"Received Supplier Discount : " + intent.getStringExtra("supplierDiscount")!!)
+            supplierDiscount = intent.getStringExtra("supplierDiscount")!!
 
-            order = Gson().fromJson(orderData, object : TypeToken<MutableList<Order>>() {}.type)
+            order = Gson().fromJson(JSONObject(orderData).getString("productsList"), object : TypeToken<MutableList<Order>>() {}.type)
             Log.e(TAG, "Received Order Data : " + order[0].token_number)
             init()
         }
@@ -124,6 +130,7 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                         jsonObject.getString("order_list"),
                         object : TypeToken<MutableList<Order>>() {}.type
                     )
+                    supplierDiscount = jsonObject.getString("supplier_discount")
                     if (order.size > 0) {
                         if (jsonObject.getBoolean("is_completed")) {
                             acceptCancelLayout.visibility = View.GONE
@@ -159,7 +166,7 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
-        totalPriceTV.text = getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+        totalPriceTV.text = getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
         itemCountTV.text = itemCount.toString()
         if (itemCount > 1) {
             itemTV.text = "Items"
@@ -171,6 +178,24 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
             totalPriceLayout.visibility = View.VISIBLE
         } else {
             totalPriceLayout.visibility = View.GONE
+        }
+
+        Log.e("TAG", "Live Order Supplier Discount : $supplierDiscount")
+        if (supplierDiscount != "" && supplierDiscount != "0" && supplierDiscount != null) {
+            discountLayout.visibility = View.VISIBLE
+            discountTotalLayout.visibility = View.VISIBLE
+            discountTxtTV.text = "Extra Discount $supplierDiscount%"
+
+            val pre = totPrice / 100
+            val percentAmount: Float = (pre * supplierDiscount.toFloat())
+            val ourPrice: Float = (totPrice - percentAmount)
+            discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+            afterDiscountValueTV.text =
+                context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+        } else {
+            discountLayout.visibility = View.GONE
+            discountTotalLayout.visibility = View.GONE
         }
 
         for (i in order) {
@@ -250,6 +275,7 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                 window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             }
             R.id.cancelBT -> {
+                cancelBT.isClickable = false
                 val dialog = Dialog(this)
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 dialog.setContentView(R.layout.cancel_order_status_dialog)
@@ -261,9 +287,15 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                 val itemTV = dialog.findViewById<TextView>(R.id.itemTV)
                 val itemCountTV = dialog.findViewById<TextView>(R.id.itemCountTV)
                 val totalPriceTV = dialog.findViewById<TextView>(R.id.totalPriceTV)
+                val discountLayout = dialog.findViewById<LinearLayout>(R.id.discountLayout)
+                val discountTxtTV = dialog.findViewById<TextView>(R.id.discountTxtTV)
+                val discountValueTV = dialog.findViewById<TextView>(R.id.discountValueTV)
+                val discountTotalLayout = dialog.findViewById<LinearLayout>(R.id.discountTotalLayout)
+                val afterDiscountValueTV = dialog.findViewById<TextView>(R.id.afterDiscountValueTV)
                 val rejectReasonET = dialog.findViewById<EditText>(R.id.rejectReasonET)
-                val cancelBT = dialog.findViewById<Button>(R.id.cancelBT)
+                val ccancelBT = dialog.findViewById<Button>(R.id.cancelBT)
                 val okBT = dialog.findViewById<Button>(R.id.okBT)
+                val closeIB = dialog.findViewById<ImageButton>(R.id.closeIB)
 
                 titleTV.text = "Reject Order"
                 userNameTV.text = order[0].user_name
@@ -283,7 +315,23 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                 } else {
                     itemTV.text = "Item"
                 }
-                totalPriceTV.text = getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+                totalPriceTV.text = getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
+                if (supplierDiscount != "" && supplierDiscount != "0" && supplierDiscount != null) {
+                    discountLayout.visibility = View.VISIBLE
+                    discountTotalLayout.visibility = View.VISIBLE
+                    discountTxtTV.text = "Extra Discount $supplierDiscount%"
+
+                    val pre = totPrice / 100
+                    val percentAmount: Float = (pre * supplierDiscount.toFloat())
+                    val ourPrice: Float = (totPrice - percentAmount)
+                    discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+                    afterDiscountValueTV.text =
+                        context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+                } else {
+                    discountLayout.visibility = View.GONE
+                    discountTotalLayout.visibility = View.GONE
+                }
 
                 val dialogOrder = mutableListOf<Order>()
                 for (i in order) {
@@ -295,8 +343,14 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                 val supplierOrdersItemAdapter = SupplierOrdersItemAdapter(this, dialogOrder, this)
                 recyclerView.adapter = supplierOrdersItemAdapter
 
-                cancelBT.setOnClickListener {
+                closeIB.setOnClickListener {
                     dialog.dismiss()
+                    cancelBT.isClickable = true
+                }
+
+                ccancelBT.setOnClickListener {
+                    dialog.dismiss()
+                    cancelBT.isClickable = true
                 }
 
                 okBT.setOnClickListener {
@@ -317,7 +371,6 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         repo!!.updateSupplierRejectedByTokenNumber(obj.toString())
                         cancelBT.isClickable = false
-                        dialog.dismiss()
                     }
 
                     repo!!.updateSupplierRejectedByTokenNumber.observe(this, androidx.lifecycle.Observer {
@@ -356,18 +409,22 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                                 obj.put("user_id", order[0].user_id)
                                 repo!!.getOrderByTokenId(obj.toString())
                             }
+
+                            dialog.dismiss()
                         }
                     })
                 }
 
                 dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 dialog.setCanceledOnTouchOutside(false)
+                dialog.setCancelable(false)
                 dialog.show()
                 val window = dialog.window!!
                 window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             }
             R.id.acceptBT -> {
                 if (itemCount > 0) {
+                    acceptBT.isClickable = false
                     val dialog = Dialog(this)
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
                     dialog.setContentView(R.layout.order_status_dialog)
@@ -379,8 +436,14 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                     val itemCountTV = dialog.findViewById<TextView>(R.id.itemCountTV)
                     val itemTV = dialog.findViewById<TextView>(R.id.itemTV)
                     val totalPriceTV = dialog.findViewById<TextView>(R.id.totalPriceTV)
+                    val discountLayout = dialog.findViewById<LinearLayout>(R.id.discountLayout)
+                    val discountTxtTV = dialog.findViewById<TextView>(R.id.discountTxtTV)
+                    val discountValueTV = dialog.findViewById<TextView>(R.id.discountValueTV)
+                    val discountTotalLayout = dialog.findViewById<LinearLayout>(R.id.discountTotalLayout)
+                    val afterDiscountValueTV = dialog.findViewById<TextView>(R.id.afterDiscountValueTV)
                     val cancelBT = dialog.findViewById<Button>(R.id.cancelBT)
                     val okBT = dialog.findViewById<Button>(R.id.okBT)
+                    val closeIB = dialog.findViewById<ImageButton>(R.id.closeIB)
 
                     titleTV.text = "Accept Order"
                     userNameTV.text = order[0].user_name
@@ -400,7 +463,23 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                     } else {
                         itemTV.text = "Item"
                     }
-                    totalPriceTV.text = getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+                    totalPriceTV.text = getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
+                    if (supplierDiscount != "" && supplierDiscount != "0" && supplierDiscount != null) {
+                        discountLayout.visibility = View.VISIBLE
+                        discountTotalLayout.visibility = View.VISIBLE
+                        discountTxtTV.text = "Extra Discount $supplierDiscount%"
+
+                        val pre = totPrice / 100
+                        val percentAmount: Float = (pre * supplierDiscount.toFloat())
+                        val ourPrice: Float = (totPrice - percentAmount)
+                        discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+                        afterDiscountValueTV.text =
+                            context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+                    } else {
+                        discountLayout.visibility = View.GONE
+                        discountTotalLayout.visibility = View.GONE
+                    }
 
                     val dialogOrder = mutableListOf<Order>()
                     for (i in order) {
@@ -412,8 +491,14 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                     val supplierOrdersItemAdapter = SupplierOrdersItemAdapter(this, dialogOrder, this)
                     recyclerView.adapter = supplierOrdersItemAdapter
 
+                    closeIB.setOnClickListener {
+                        dialog.dismiss()
+                        acceptBT.isClickable = true
+                    }
+
                     cancelBT.setOnClickListener {
                         dialog.dismiss()
+                        acceptBT.isClickable = true
                     }
 
                     okBT.setOnClickListener {
@@ -429,7 +514,6 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                             obj.put("added_datetime", order[0].added_datetime)
                             obj.put("user_id", order[0].user_id)
                             repo!!.updateSupplierAcceptedByTokenNumber(obj.toString())
-                            dialog.dismiss()
                         }
 
                         repo!!.updateSupplierAcceptedByTokenNumber.observe(this, androidx.lifecycle.Observer {
@@ -470,12 +554,15 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                                     obj.put("user_id", order[0].user_id)
                                     repo!!.getOrderByTokenId(obj.toString())
                                 }
+
+                                dialog.dismiss()
                             }
                         })
                     }
 
                     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                     dialog.setCanceledOnTouchOutside(false)
+                    dialog.setCancelable(false)
                     dialog.show()
                     val window = dialog.window!!
                     window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -501,6 +588,7 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
 
 
                 if (o2Exist && o2Open) {
+                    orderCompleteBT.isClickable = false
                     val dialog = Dialog(this)
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
                     dialog.setContentView(R.layout.o2_order_status_dialog)
@@ -511,11 +599,18 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                     val o2AcceptCancelLayout = dialog.findViewById<LinearLayout>(R.id.o2AcceptCancelLayout)
                     val cancelBT = dialog.findViewById<Button>(R.id.cancelBT)
                     val okBT = dialog.findViewById<Button>(R.id.okBT)
+                    val closeIB = dialog.findViewById<ImageButton>(R.id.closeIB)
 
                     o2DescriptionTV.text = des
 
+                    closeIB.setOnClickListener {
+                        dialog.dismiss()
+                        orderCompleteBT.isClickable = true
+                    }
+
                     cancelBT.setOnClickListener {
                         dialog.dismiss()
+                        orderCompleteBT.isClickable = true
                     }
 
                     okBT.setOnClickListener {
@@ -555,7 +650,23 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                                                 }
                                             }
                                             totalPriceTV.text =
-                                                getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+                                                getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
+                                            if (supplierDiscount != "" && supplierDiscount != "0" && supplierDiscount != null) {
+                                                discountLayout.visibility = View.VISIBLE
+                                                discountTotalLayout.visibility = View.VISIBLE
+                                                discountTxtTV.text = "Extra Discount $supplierDiscount%"
+
+                                                val pre = totPrice / 100
+                                                val percentAmount: Float = (pre * supplierDiscount.toFloat())
+                                                val ourPrice: Float = (totPrice - percentAmount)
+                                                discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+                                                afterDiscountValueTV.text =
+                                                    context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+                                            } else {
+                                                discountLayout.visibility = View.GONE
+                                                discountTotalLayout.visibility = View.GONE
+                                            }
                                             itemCountTV.text = itemCount.toString()
                                             if (itemCount > 1) {
                                                 itemTV.text = "Items"
@@ -575,8 +686,14 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                                             val itemCountTV = cDialog.findViewById<TextView>(R.id.itemCountTV)
                                             val itemTV = cDialog.findViewById<TextView>(R.id.itemTV)
                                             val totalPriceTV = cDialog.findViewById<TextView>(R.id.totalPriceTV)
+                                            val discountLayout = cDialog.findViewById<LinearLayout>(R.id.discountLayout)
+                                            val discountTxtTV = cDialog.findViewById<TextView>(R.id.discountTxtTV)
+                                            val discountValueTV = cDialog.findViewById<TextView>(R.id.discountValueTV)
+                                            val discountTotalLayout = cDialog.findViewById<LinearLayout>(R.id.discountTotalLayout)
+                                            val afterDiscountValueTV = cDialog.findViewById<TextView>(R.id.afterDiscountValueTV)
                                             val ccancelBT = cDialog.findViewById<Button>(R.id.cancelBT)
                                             val cokBT = cDialog.findViewById<Button>(R.id.okBT)
+                                            val ccloseIB = cDialog.findViewById<ImageButton>(R.id.closeIB)
 
                                             titleTV.text = "Complete Order"
                                             userNameTV.text = order[0].user_name
@@ -597,7 +714,23 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                                             }
 
                                             totalPriceTV.text =
-                                                getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+                                                getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
+                                            if (supplierDiscount != "" && supplierDiscount != "0" && supplierDiscount != null) {
+                                                discountLayout.visibility = View.VISIBLE
+                                                discountTotalLayout.visibility = View.VISIBLE
+                                                discountTxtTV.text = "Extra Discount $supplierDiscount%"
+
+                                                val pre = totPrice / 100
+                                                val percentAmount: Float = (pre * supplierDiscount.toFloat())
+                                                val ourPrice: Float = (totPrice - percentAmount)
+                                                discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+                                                afterDiscountValueTV.text =
+                                                    context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+                                            } else {
+                                                discountLayout.visibility = View.GONE
+                                                discountTotalLayout.visibility = View.GONE
+                                            }
 
                                             val dialogOrder = mutableListOf<Order>()
                                             for (i in order) {
@@ -614,8 +747,14 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                                                 )
                                             recyclerView.adapter = csupplierOrdersItemAdapter
 
+                                            ccloseIB.setOnClickListener {
+                                                cDialog.dismiss()
+                                                orderCompleteBT.isClickable = true
+                                            }
+
                                             ccancelBT.setOnClickListener {
                                                 cDialog.dismiss()
+                                                orderCompleteBT.isClickable = true
                                             }
 
                                             cokBT.setOnClickListener {
@@ -636,7 +775,6 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                                                     cobj.put("added_datetime", order[0].added_datetime)
                                                     cobj.put("user_id", order[0].user_id)
                                                     repo!!.updateSupplierCompletedByTokenNumber(cobj.toString())
-                                                    cDialog.dismiss()
                                                 }
 
                                                 repo!!.updateSupplierCompletedByTokenNumber.observe(
@@ -690,12 +828,16 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                                                                 obj.put("user_id", order[0].user_id)
                                                                 repo!!.getOrderByTokenId(obj.toString())
                                                             }
+
+                                                            cDialog.dismiss()
+
                                                         }
                                                     })
                                             }
 
                                             cDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                                             cDialog.setCanceledOnTouchOutside(false)
+                                            cDialog.setCancelable(false)
                                             cDialog.show()
                                             val window = cDialog.window!!
                                             window.setLayout(
@@ -723,10 +865,12 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
 
                     dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                     dialog.setCanceledOnTouchOutside(false)
+                    dialog.setCancelable(false)
                     dialog.show()
                     val window = dialog.window!!
                     window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
                 } else {
+                    orderCompleteBT.isClickable = false
                     val cDialog = Dialog(this)
                     cDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
                     cDialog.setContentView(R.layout.order_status_dialog)
@@ -738,8 +882,14 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                     val itemCountTV = cDialog.findViewById<TextView>(R.id.itemCountTV)
                     val itemTV = cDialog.findViewById<TextView>(R.id.itemTV)
                     val totalPriceTV = cDialog.findViewById<TextView>(R.id.totalPriceTV)
+                    val discountLayout = cDialog.findViewById<LinearLayout>(R.id.discountLayout)
+                    val discountTxtTV = cDialog.findViewById<TextView>(R.id.discountTxtTV)
+                    val discountValueTV = cDialog.findViewById<TextView>(R.id.discountValueTV)
+                    val discountTotalLayout = cDialog.findViewById<LinearLayout>(R.id.discountTotalLayout)
+                    val afterDiscountValueTV = cDialog.findViewById<TextView>(R.id.afterDiscountValueTV)
                     val ccancelBT = cDialog.findViewById<Button>(R.id.cancelBT)
                     val cokBT = cDialog.findViewById<Button>(R.id.okBT)
+                    val ccloseIB = cDialog.findViewById<ImageButton>(R.id.closeIB)
 
                     titleTV.text = "Complete Order"
                     userNameTV.text = order[0].user_name
@@ -760,7 +910,24 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                         itemTV.text = "Item"
                     }
                     totalPriceTV.text =
-                        this.getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+                        this.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
+                    if (supplierDiscount != "" && supplierDiscount != "0" && supplierDiscount != null) {
+                        discountLayout.visibility = View.VISIBLE
+                        discountTotalLayout.visibility = View.VISIBLE
+                        discountTxtTV.text = "Extra Discount $supplierDiscount%"
+
+                        val pre = totPrice / 100
+                        val percentAmount: Float = (pre * supplierDiscount.toFloat())
+                        val ourPrice: Float = (totPrice - percentAmount)
+                        discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+                        afterDiscountValueTV.text =
+                            context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+                    } else {
+                        discountLayout.visibility = View.GONE
+                        discountTotalLayout.visibility = View.GONE
+                    }
+
 
                     val dialogOrder = mutableListOf<Order>()
                     for (i in order) {
@@ -773,8 +940,14 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                     val csupplierOrdersItemAdapter = SupplierOrdersItemAdapter(this, dialogOrder, this)
                     recyclerView.adapter = csupplierOrdersItemAdapter
 
+                    ccloseIB.setOnClickListener {
+                        cDialog.dismiss()
+                        orderCompleteBT.isClickable = true
+                    }
+
                     ccancelBT.setOnClickListener {
                         cDialog.dismiss()
+                        orderCompleteBT.isClickable = true
                     }
 
                     cokBT.setOnClickListener {
@@ -790,7 +963,6 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                             cobj.put("added_datetime", order[0].added_datetime)
                             cobj.put("user_id", order[0].user_id)
                             repo!!.updateSupplierCompletedByTokenNumber(cobj.toString())
-                            cDialog.dismiss()
                         }
 
                         repo!!.updateSupplierCompletedByTokenNumber.observe(
@@ -840,12 +1012,16 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                                         obj.put("user_id", order[0].user_id)
                                         repo!!.getOrderByTokenId(obj.toString())
                                     }
+
+                                    cDialog.dismiss()
+
                                 }
                             })
                     }
 
                     cDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                     cDialog.setCanceledOnTouchOutside(false)
+                    cDialog.setCancelable(false)
                     cDialog.show()
                     val window = cDialog.window!!
                     window.setLayout(
@@ -868,6 +1044,12 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
     private fun doubleToStringNoDecimal(d: Double): String? {
         val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
         formatter.applyPattern("#,##,###.##")
+        return formatter.format(d)
+    }
+
+    private fun doubleToStringTwoDecimal(d: Double): String? {
+        val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
+        formatter.applyPattern("#,##,###.00")
         return formatter.format(d)
     }
 
@@ -896,12 +1078,29 @@ class OrderInfoActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
 
-            totalPriceTV.text = getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+            totalPriceTV.text = getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
             itemCountTV.text = itemCount.toString()
             if (itemCount > 1) {
                 itemTV.text = "Items"
             } else {
                 itemTV.text = "Item"
+            }
+
+            if (supplierDiscount != "" && supplierDiscount != "0" && supplierDiscount != null) {
+                discountLayout.visibility = View.VISIBLE
+                discountTotalLayout.visibility = View.VISIBLE
+                discountTxtTV.text = "Extra Discount $supplierDiscount%"
+
+                val pre = totPrice / 100
+                val percentAmount: Float = (pre * supplierDiscount.toFloat())
+                val ourPrice: Float = (totPrice - percentAmount)
+                discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+                afterDiscountValueTV.text =
+                    Constants.context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+            } else {
+                discountLayout.visibility = View.GONE
+                discountTotalLayout.visibility = View.GONE
             }
 
             if (itemCount > 0) {

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/pad_10"
+        android:layout_margin="@dimen/pad_10">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/pad_40"
+                android:background="@color/colorPrimary">
+            <in.inferon.msl.lemonor.view.ui.BoldTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/text_order"
+                    android:textSize="@dimen/text_16sp"
+                    android:textColor="@color/white"
+                    android:gravity="center"/>
+
+            <ImageButton
+                    android:id="@+id/closeIB"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="@dimen/pad_40"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_close_white_18dp"
+                    android:contentDescription="@string/app_name"
+                    android:adjustViewBounds="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
+
+        <in.inferon.msl.lemonor.view.ui.LightEditText
+                android:id="@+id/openOrderET"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/pad_150"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/fontColor"
+                android:inputType="textMultiLine"
+                android:background="@drawable/main_edit_tx_bg"
+                android:hint="@string/you_can_freely_type_your_order_here"
+                android:textColorHint="@color/light_gray"
+                android:imeOptions="actionDone"
+                android:padding="@dimen/pad_10"
+                android:layout_margin="@dimen/pad_20"
+                android:gravity="top"/>
+
+
+        <in.inferon.msl.lemonor.view.ui.LightButton
+                android:id="@+id/doneBT"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/pad_40"
+                android:text="@string/done"
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@color/main_cancel_bt_color"
+                android:background="@drawable/main_cancel_bt_bg"
+                android:paddingTop="@dimen/pad_5"
+                android:paddingBottom="@dimen/pad_5"
+                android:paddingLeft="@dimen/pad_20"
+                android:paddingRight="@dimen/pad_20"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/pad_10"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -31,7 +31,8 @@ data class Products(
     @SerializedName("is_supplier_product") var is_supplier_product: Boolean,
     @SerializedName("featured_product_flag") var featured_product_flag: Boolean,
     @SerializedName("unit_value_changed") var unit_value_changed: Boolean,
-    @SerializedName("mrp") var mrp: String
+    @SerializedName("mrp") var mrp: String,
+    @SerializedName("discount") var discount: String
 ) {
 
 }

@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.select_categories_adapter.view.*
+import kotlinx.android.synthetic.main.psa_select_categories_adapter.view.*
 
 class PSASelectCategoriesAdapter(
     private val context: Context,
@@ -17,7 +17,7 @@ class PSASelectCategoriesAdapter(
     private val productSelectionActivity: ProductSelectionActivity
 ) : RecyclerView.Adapter<PSASelectCategoriesAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(context).inflate(R.layout.select_categories_adapter, parent, false))
+        return ViewHolder(LayoutInflater.from(context).inflate(R.layout.psa_select_categories_adapter, parent, false))
     }
 
     override fun getItemCount(): Int {

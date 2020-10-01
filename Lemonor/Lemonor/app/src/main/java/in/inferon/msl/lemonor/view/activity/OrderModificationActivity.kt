@@ -51,10 +51,10 @@ class OrderModificationActivity : AppCompatActivity(), View.OnClickListener {
         LocalBroadcastManager.getInstance(this)
             .registerReceiver(orderModified, IntentFilter("OrderModified"))
 
-        token_no = intent.getStringExtra("token_number")
-        added_datetime = intent.getStringExtra("added_datetime")
-        user_id = intent.getStringExtra("user_id")
-        total = intent.getStringExtra("total")
+        token_no = intent.getStringExtra("token_number")!!
+        added_datetime = intent.getStringExtra("added_datetime")!!
+        user_id = intent.getStringExtra("user_id")!!
+        total = intent.getStringExtra("total")!!
         totalTV.text = getString(R.string.Rs) + " " + doubleToStringNoDecimal(total.toDouble())
         repo = Repository()
 
@@ -125,8 +125,10 @@ class OrderModificationActivity : AppCompatActivity(), View.OnClickListener {
 
             var tot = 0f
             for (i in order) {
-                tot += i.price.toFloat()
-                Log.e(TAG, "Tot : $tot")
+                if (i.order_status == "open" || i.order_status == "supplier_accepted" || i.order_status == "completed") {
+                    tot += i.price.toFloat()
+                    Log.e(TAG, "Tot : $tot")
+                }
             }
             totalTV.text = getString(R.string.Rs) + " " + doubleToStringNoDecimal(tot.toDouble())
         }

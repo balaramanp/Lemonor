@@ -75,32 +75,99 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:layout_weight="1">
-                        <in.inferon.msl.lemonor.view.ui.BoldEditText
-                                android:id="@+id/productNameTV"
+                        <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textSize="@dimen/text_18sp"
-                                android:textColor="@color/black"
-                                android:gravity="center"
-                                android:maxLines="1"
-                                android:hint="@string/product_name"
-                                android:textColorHint="@color/gray"
-                                android:background="@drawable/main_edit_tx_bg"
-                                android:padding="@dimen/pad_10"
-                                android:ellipsize="end"/>
+                                android:layout_height="wrap_content">
+                            <in.inferon.msl.lemonor.view.ui.BoldEditText
+                                    android:id="@+id/productNameTV"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/text_18sp"
+                                    android:textColor="@color/black"
+                                    android:gravity="center"
+                                    android:textColorHint="@color/gray"
+                                    android:maxLines="1"
+                                    android:background="@drawable/main_edit_tx_bg"
+                                    android:ellipsize="end"
+                                    android:padding="@dimen/pad_10"
+                                    android:layout_marginTop="@dimen/pad_10"/>
 
-                        <in.inferon.msl.lemonor.view.ui.LightEditText
-                                android:id="@+id/productAliasNameTV"
+                            <in.inferon.msl.lemonor.view.ui.LightTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/product_name"
+                                    android:textSize="@dimen/text_12sp"
+                                    android:textColor="@color/light_gray"
+                                    android:background="@color/white"
+                                    android:layout_marginLeft="@dimen/pad_20"
+                                    android:layout_marginStart="@dimen/pad_20"/>
+                        </RelativeLayout>
+
+                        <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="@dimen/text_14sp"
-                                android:textColor="@color/black"
-                                android:layout_marginTop="@dimen/pad_10"
-                                android:hint="@string/local_name"
-                                android:textColorHint="@color/gray"
-                                android:background="@drawable/main_edit_tx_bg"
-                                android:padding="@dimen/pad_10"
-                                android:gravity="center"/>
+                                android:orientation="horizontal"
+                                android:layout_marginTop="@dimen/pad_10">
+                            <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:layout_marginRight="@dimen/pad_10"
+                                    android:layout_marginEnd="@dimen/pad_10">
+                                <in.inferon.msl.lemonor.view.ui.LightEditText
+                                        android:id="@+id/productAliasNameTV"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="@dimen/text_14sp"
+                                        android:textColor="@color/black"
+                                        android:textColorHint="@color/gray"
+                                        android:gravity="center"
+                                        android:background="@drawable/main_edit_tx_bg"
+                                        android:padding="@dimen/pad_10"
+                                        android:layout_marginTop="@dimen/pad_10"/>
+
+                                <in.inferon.msl.lemonor.view.ui.LightTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/reg_name"
+                                        android:textSize="@dimen/text_12sp"
+                                        android:textColor="@color/light_gray"
+                                        android:background="@color/white"
+                                        android:layout_marginLeft="@dimen/pad_20"
+                                        android:layout_marginStart="@dimen/pad_20"/>
+                            </RelativeLayout>
+
+
+                            <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="2">
+                                <in.inferon.msl.lemonor.view.ui.LightEditText
+                                        android:id="@+id/productMRPTV"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="@dimen/text_14sp"
+                                        android:textColor="@color/black"
+                                        android:textColorHint="@color/gray"
+                                        android:gravity="center"
+                                        android:inputType="numberDecimal"
+                                        android:maxLength="7"
+                                        android:background="@drawable/main_edit_tx_bg"
+                                        android:padding="@dimen/pad_10"
+                                        android:layout_marginTop="@dimen/pad_10"/>
+
+                                <in.inferon.msl.lemonor.view.ui.LightTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/mrp"
+                                        android:textSize="@dimen/text_12sp"
+                                        android:textColor="@color/light_gray"
+                                        android:background="@color/white"
+                                        android:layout_marginLeft="@dimen/pad_20"
+                                        android:layout_marginStart="@dimen/pad_20"/>
+                            </RelativeLayout>
+
+                        </LinearLayout>
 
                         <RelativeLayout
                                 android:layout_width="match_parent"
@@ -120,20 +187,67 @@
                                         android:textColor="@color/black"/>
 
                                 <in.inferon.msl.lemonor.view.ui.LightTextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/slash"
-                                        android:textSize="@dimen/text_14sp"
-                                        android:textColor="@color/black"
-                                        android:layout_marginLeft="@dimen/pad_5"
-                                        android:layout_marginRight="@dimen/pad_5"/>
-
-                                <in.inferon.msl.lemonor.view.ui.LightTextView
                                         android:id="@+id/unitTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:textSize="@dimen/text_14sp"
-                                        android:textColor="@color/black"/>
+                                        android:textColor="@color/black"
+                                        android:layout_marginLeft="@dimen/pad_5"
+                                        android:layout_marginStart="@dimen/pad_5"/>
+
+                                <LinearLayout
+                                        android:id="@+id/mrpLayout"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:gravity="center_vertical"
+                                        android:layout_marginLeft="@dimen/pad_5"
+                                        android:layout_marginStart="@dimen/pad_5"
+                                        android:visibility="gone">
+
+                                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/RsSymbol"
+                                            android:textSize="@dimen/text_12sp"
+                                            android:textColor="@color/gray"
+                                            android:layout_marginRight="@dimen/pad_3"
+                                            android:layout_marginEnd="@dimen/pad_3"
+                                            android:visibility="visible"/>
+
+                                    <RelativeLayout
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center">
+                                        <in.inferon.msl.lemonor.view.ui.LightTextView
+                                                android:id="@+id/mrpTV"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:textSize="@dimen/text_12sp"
+                                                android:textColor="@color/gray"
+                                                android:layout_centerInParent="true"/>
+
+                                        <View
+                                                android:layout_width="@dimen/pad_20"
+                                                android:layout_height="@dimen/pad_1"
+                                                android:background="@color/gray"
+                                                android:layout_centerInParent="true"/>
+                                    </RelativeLayout>
+
+                                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                                            android:id="@+id/percentageOffTV"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/text_12sp"
+                                            android:textColor="@color/white"
+                                            android:background="@drawable/off_txt_bg"
+                                            android:paddingLeft="@dimen/pad_10"
+                                            android:paddingRight="@dimen/pad_10"
+                                            android:layout_marginLeft="@dimen/pad_5"
+                                            android:layout_marginStart="@dimen/pad_5"
+                                            android:paddingTop="@dimen/pad_3"
+                                            android:paddingBottom="@dimen/pad_3"/>
+                                </LinearLayout>
                             </LinearLayout>
 
                             <LinearLayout
@@ -147,9 +261,9 @@
                                     android:background="@drawable/button_bg"
                                     android:paddingTop="@dimen/pad_5"
                                     android:paddingBottom="@dimen/pad_5"
-                                    android:paddingLeft="@dimen/pad_10"
-                                    android:paddingRight="@dimen/pad_20"
-                                    android:visibility="invisible">
+                                    android:paddingLeft="@dimen/pad_5"
+                                    android:paddingRight="@dimen/pad_5"
+                                    android:visibility="gone">
                                 <ImageView
                                         android:layout_width="@dimen/pad_20"
                                         android:layout_height="@dimen/pad_20"
@@ -160,41 +274,55 @@
                                         android:id="@+id/currentItemTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textSize="@dimen/text_14sp"
+                                        android:textSize="@dimen/text_12sp"
                                         android:textColor="@color/white"
-                                        android:layout_marginLeft="@dimen/pad_10"
-                                        android:layout_marginRight="@dimen/pad_5"/>
+                                        android:layout_marginLeft="@dimen/pad_5"
+                                        android:layout_marginRight="@dimen/pad_3"/>
                                 <in.inferon.msl.lemonor.view.ui.LightTextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="@string/slash"
                                         android:textSize="@dimen/text_14sp"
                                         android:textColor="@color/lightGreen"
-                                        android:layout_marginLeft="@dimen/pad_5"
-                                        android:layout_marginRight="@dimen/pad_5"/>
+                                        android:layout_marginLeft="@dimen/pad_3"
+                                        android:layout_marginRight="@dimen/pad_3"/>
                                 <in.inferon.msl.lemonor.view.ui.LightTextView
                                         android:id="@+id/totalItemTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textSize="@dimen/text_14sp"
+                                        android:textSize="@dimen/text_12sp"
                                         android:textColor="@color/lightGreen"/>
                             </LinearLayout>
                         </RelativeLayout>
 
-                        <in.inferon.msl.lemonor.view.ui.LightEditText
-                                android:id="@+id/descriptionTV"
+                        <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="@dimen/text_14sp"
-                                android:textColor="@color/black"
-                                android:layout_marginTop="@dimen/pad_10"
-                                android:gravity="center"
-                                android:inputType="textMultiLine"
-                                android:hint="@string/description"
-                                android:textColorHint="@color/gray"
-                                android:background="@drawable/main_edit_tx_bg"
-                                android:padding="@dimen/pad_10"
-                                android:ellipsize="end"/>
+                                android:layout_marginTop="@dimen/pad_10">
+                            <in.inferon.msl.lemonor.view.ui.LightEditText
+                                    android:id="@+id/descriptionTV"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/text_14sp"
+                                    android:textColor="@color/black"
+                                    android:layout_marginTop="@dimen/pad_10"
+                                    android:gravity="center"
+                                    android:textColorHint="@color/gray"
+                                    android:ellipsize="end"
+                                    android:inputType="textMultiLine"
+                                    android:background="@drawable/main_edit_tx_bg"
+                                    android:padding="@dimen/pad_10"/>
+
+                            <in.inferon.msl.lemonor.view.ui.LightTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/description"
+                                    android:textSize="@dimen/text_12sp"
+                                    android:textColor="@color/light_gray"
+                                    android:background="@color/white"
+                                    android:layout_marginLeft="@dimen/pad_20"
+                                    android:layout_marginStart="@dimen/pad_20"/>
+                        </RelativeLayout>
 
                         <in.inferon.msl.lemonor.view.ui.BoldTextView
                                 android:layout_width="match_parent"

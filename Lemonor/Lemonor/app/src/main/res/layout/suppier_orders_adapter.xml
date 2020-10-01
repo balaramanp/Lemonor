@@ -79,22 +79,262 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
+                    android:id="@+id/o2Layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:padding="@dimen/pad_5">
+
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/o2DescriptionTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/fontColor"
+                        android:layout_weight="1"/>
+
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/o2ProductPriceTV"
+                        android:layout_width="@dimen/pad_100"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/fontColor"
+                        android:gravity="end"/>
+            </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/itemLayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/pad_5">
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/productNameTV1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/fontColor"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:layout_weight="1"/>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_weight="1">
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="end"
+                            android:layout_weight="1">
+                        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                                android:id="@+id/productQtyTV1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/text_14sp"
+                                android:textColor="@color/fontColor"
+                                android:layout_marginLeft="@dimen/pad_3"
+                                android:layout_marginStart="@dimen/pad_3"
+                                android:layout_marginRight="@dimen/pad_3"
+                                android:layout_marginEnd="@dimen/pad_3"/>
+
+                        <in.inferon.msl.lemonor.view.ui.LightTextView
+                                android:id="@+id/productUnitTV1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/text_14sp"
+                                android:textColor="@color/fontColor"
+                                android:layout_marginRight="@dimen/pad_3"
+                                android:layout_marginEnd="@dimen/pad_3"/>
+                    </LinearLayout>
+
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:id="@+id/productRateTV1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/gray"
+                            android:layout_weight="2"/>
+                </LinearLayout>
+
+
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/productPriceTV1"
+                        android:layout_width="@dimen/pad_100"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/fontColor"
+                        android:gravity="end"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                    android:id="@+id/itemLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/pad_5">
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/productNameTV2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/fontColor"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:layout_weight="1"/>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_weight="1">
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="end"
+                            android:layout_weight="1">
+                        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                                android:id="@+id/productQtyTV2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/text_14sp"
+                                android:textColor="@color/fontColor"
+                                android:layout_marginLeft="@dimen/pad_3"
+                                android:layout_marginStart="@dimen/pad_3"
+                                android:layout_marginRight="@dimen/pad_3"
+                                android:layout_marginEnd="@dimen/pad_3"/>
+
+                        <in.inferon.msl.lemonor.view.ui.LightTextView
+                                android:id="@+id/productUnitTV2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/text_14sp"
+                                android:textColor="@color/fontColor"
+                                android:layout_marginRight="@dimen/pad_3"
+                                android:layout_marginEnd="@dimen/pad_3"/>
+                    </LinearLayout>
+
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:id="@+id/productRateTV2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/gray"
+                            android:layout_weight="2"/>
+                </LinearLayout>
+
+
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/productPriceTV2"
+                        android:layout_width="@dimen/pad_100"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/fontColor"
+                        android:gravity="end"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                    android:id="@+id/itemLayout3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/pad_5">
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/productNameTV3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/fontColor"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:layout_weight="1"/>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_weight="1">
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="end"
+                            android:layout_weight="1">
+                        <in.inferon.msl.lemonor.view.ui.BoldTextView
+                                android:id="@+id/productQtyTV3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/text_14sp"
+                                android:textColor="@color/fontColor"
+                                android:layout_marginLeft="@dimen/pad_3"
+                                android:layout_marginStart="@dimen/pad_3"
+                                android:layout_marginRight="@dimen/pad_3"
+                                android:layout_marginEnd="@dimen/pad_3"/>
+
+                        <in.inferon.msl.lemonor.view.ui.LightTextView
+                                android:id="@+id/productUnitTV3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/text_14sp"
+                                android:textColor="@color/fontColor"
+                                android:layout_marginRight="@dimen/pad_3"
+                                android:layout_marginEnd="@dimen/pad_3"/>
+                    </LinearLayout>
+
+                    <in.inferon.msl.lemonor.view.ui.LightTextView
+                            android:id="@+id/productRateTV3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/gray"
+                            android:layout_weight="2"/>
+                </LinearLayout>
+
+
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/productPriceTV3"
+                        android:layout_width="@dimen/pad_100"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/fontColor"
+                        android:gravity="end"/>
+            </LinearLayout>
+
+            <in.inferon.msl.lemonor.view.ui.LightTextView
+                    android:id="@+id/moreItemCountTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_12sp"
+                    android:textColor="@color/gray"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/pad_10"
+                    android:layout_marginBottom="@dimen/pad_10"
+                    android:layout_marginStart="@dimen/pad_5"
+                    android:layout_marginEnd="@dimen/pad_5"
+                    android:paddingTop="@dimen/pad_5"
+                    android:paddingBottom="@dimen/pad_5"
+                    android:paddingLeft="@dimen/pad_20"
+                    android:paddingRight="@dimen/pad_20"
+                    android:background="@drawable/more_item_tv_bg"/>
+
+            <!--<RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                 <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clickable="true"/>
-                <LinearLayout
-                        android:id="@+id/recyclerViewLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                </LinearLayout>
-            </RelativeLayout>
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+            </RelativeLayout>-->
 
             <LinearLayout
                     android:layout_width="match_parent"
@@ -138,6 +378,55 @@
                         android:textColor="@color/fontColor"
                         android:gravity="end"
                         android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/discountLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/pad_5">
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:id="@+id/discountTxtTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/orange"
+                        android:gravity="end"
+                        android:layout_weight="1"/>
+                <in.inferon.msl.lemonor.view.ui.BoldTextView
+                        android:id="@+id/discountValueTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/orange"
+                        android:gravity="end"
+                        android:layout_weight="2"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                    android:id="@+id/discountTotalLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/pad_5">
+                <in.inferon.msl.lemonor.view.ui.LightTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/orange"
+                        android:gravity="end"
+                        android:layout_weight="1"/>
+                <in.inferon.msl.lemonor.view.ui.BoldTextView
+                        android:id="@+id/afterDiscountValueTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/orange"
+                        android:gravity="end"
+                        android:layout_weight="2"/>
             </LinearLayout>
         </LinearLayout>
 

@@ -108,22 +108,22 @@ class FireBaseService : FirebaseMessagingService() {
                     "New order from " + data.getString("user_name") + " (" + data.getString("token_number") + ")"
                 content =
                     "New order received from " + data.getString("user_name") + " (" + data.getString("user_mobile_number") +
-                            ") \nOrder value : Rs. " + data.getString("total")
+                            ") \nOrder value : Rs. " + data.getString("discounted_total")
             } else if (data.getString("for") == "supplier_accepted") {
                 contentTitle = "Order Accepted (" + data.getString("token_number") + ")"
                 content =
                     data.getString("shop_name") + " have accepted your order (" + data.getString("token_number") + ")  Order Value : Rs." +
-                            data.getString("total")
+                            data.getString("discounted_total")
             } else if (data.getString("for") == "supplier_rejected") {
                 contentTitle = "Order Cancelled (" + data.getString("token_number") + ")"
                 content =
                     "Sorry, " + data.getString("shop_name") + " have cancelled your order (" + data.getString("token_number") + ")  Order Value : Rs." +
-                            data.getString("total")
+                            data.getString("discounted_total")
             } else if (data.getString("for") == "order_completed") {
                 contentTitle = "Order has been Packed and Out for Delivery (" + data.getString("token_number") + ")"
                 content =
                     data.getString("shop_name") + " delivered your order (" + data.getString("token_number") + ")  Order Value : Rs." +
-                            data.getString("total")
+                            data.getString("discounted_total")
             } else if (data.getString("for") == "supplier_rejected_by_order_id") {
                 contentTitle = "One of the Product Unavailable (" + data.getString("order_id") + ")"
                 if (data.getString("product_name") == "Open Order") {
@@ -197,22 +197,22 @@ class FireBaseService : FirebaseMessagingService() {
                     "New order from " + data.getString("user_name") + " (" + data.getString("token_number") + ")"
                 content =
                     "New order received from " + data.getString("user_name") + " (" + data.getString("user_mobile_number") +
-                            ") \nOrder Value : Rs." + data.getString("total")
+                            ") \nOrder Value : Rs." + data.getString("discounted_total")
             } else if (data.getString("for") == "supplier_accepted") {
                 contentTitle = "Order Accepted (" + data.getString("token_number") + ")"
                 content =
                     data.getString("shop_name") + " have accepted your order (" + data.getString("token_number") + ")  Order Value : Rs." +
-                            data.getString("total")
+                            data.getString("discounted_total")
             } else if (data.getString("for") == "supplier_rejected") {
                 contentTitle = "Order Cancelled (" + data.getString("token_number") + ")"
                 content =
                     "Sorry, " + data.getString("shop_name") + " have cancelled your order (" + data.getString("token_number") + ")  Order Value : Rs." +
-                            data.getString("total")
+                            data.getString("discounted_total")
             } else if (data.getString("for") == "order_completed") {
                 contentTitle = "Order has been Packed and Out for Delivery (" + data.getString("token_number") + ")"
                 content =
                     data.getString("shop_name") + " delivered your order (" + data.getString("token_number") + ")  Order Value : Rs." +
-                            data.getString("total")
+                            data.getString("discounted_total")
             } else if (data.getString("for") == "supplier_rejected_by_order_id") {
                 contentTitle = "One of the Product Unavailable (" + data.getString("order_id") + ")"
                 if (data.getString("product_name") == "Open Order") {

@@ -3,11 +3,11 @@ package `in`.inferon.msl.lemonor.view.activity
 import `in`.inferon.msl.lemonor.R
 import `in`.inferon.msl.lemonor.model.Constants
 import `in`.inferon.msl.lemonor.model.pojo.Address
+import `in`.inferon.msl.lemonor.model.pojo.Category
+import `in`.inferon.msl.lemonor.model.pojo.MajorCategory
 import `in`.inferon.msl.lemonor.model.pojo.Products
 import `in`.inferon.msl.lemonor.repo.Repository
-import `in`.inferon.msl.lemonor.view.adapter.AddressesSelectionAdapter
-import `in`.inferon.msl.lemonor.view.adapter.PlaceOrderAdapter
-import `in`.inferon.msl.lemonor.view.adapter.SelectCategoriesAdapter
+import `in`.inferon.msl.lemonor.view.adapter.*
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.*
@@ -32,6 +32,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -59,7 +60,7 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
     private var productsList = mutableListOf<Products>()
     private var mainProductsList = mutableListOf<Products>()
     private var orderedProductsList = mutableListOf<Products>()
-    private var categoryList = mutableListOf<String>()
+    private var categoryList = mutableListOf<MajorCategory>()
     private var placeOrderAdapter: PlaceOrderAdapter? = null
     private val PREF = "Pref"
     private var shared: SharedPreferences? = null
@@ -78,6 +79,7 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
     private var addressesRV: RecyclerView? = null
     private var selectedAddressID = ""
     private var selectedAddressPosition = 0
+    private var supplierDiscount = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,16 +90,13 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
             .registerReceiver(minusReceiver, IntentFilter("MinusReceiver"))
         LocalBroadcastManager.getInstance(this)
             .registerReceiver(orderPlacedSuccessfully, IntentFilter("OrderPlacedSuccessfully"))
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(addEditAddress, IntentFilter("AddEditAddress"))
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(selectedAddress, IntentFilter("SelectedAddress"))
 
         repo = Repository()
         shared = getSharedPreferences(PREF, MODE_PRIVATE)
+        nestedScrollView.visibility = View.INVISIBLE
 
-        val animation: Animation = AnimationUtils.loadAnimation(this, R.anim.zoom_in_out)
-        editIV.startAnimation(animation)
+        /*val animation: Animation = AnimationUtils.loadAnimation(this, R.anim.zoom_in_out)
+        editIV.startAnimation(animation)*/
 
         supplier_id = intent.getStringExtra("supplier_id")!!
         shopName = intent.getStringExtra("shop_name")!!
@@ -144,8 +143,11 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
         repo!!.getProductsListBySupplierIdForCustomer.observe(this, androidx.lifecycle.Observer {
             run {
                 progressLayout.visibility = View.GONE
+                nestedScrollView.visibility = View.VISIBLE
                 val jsonObject = JSONObject(it)
+                Log.e(TAG, "Get Product List By Supplier ID For Customer : $jsonObject")
                 if (jsonObject.getString("status") == "ok") {
+                    supplierDiscount = jsonObject.getString("supplier_discount")
                     productsList =
                         Gson().fromJson(
                             jsonObject.getString("supplier_products_list"),
@@ -153,17 +155,24 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
                         )
                     mainProductsList.addAll(productsList)
 
+                    if (productsList.size >= 30) {
+                        moreItemTV.visibility = View.VISIBLE
+                    } else {
+                        moreItemTV.visibility = View.GONE
+                    }
+
                     if (isFirstTimeData) {
                         categoryList =
                             Gson().fromJson(
                                 jsonObject.getString("categories"),
-                                object : TypeToken<MutableList<String>>() {}.type
+                                object : TypeToken<MutableList<MajorCategory>>() {}.type
                             )
-                        categoryList.reverse()
-                        categoryList.add("All")
-                        categoryList.reverse()
-                        categoryNameTV.visibility = View.VISIBLE
-                        categoryNameTV.text = categoryList[0]
+                        Log.e(TAG, "Received Category List : $categoryList")
+
+                        categoriesRV.layoutManager = GridLayoutManager(this, 3)
+                        val categoryListAdapter = CategoryListAdapter(this, categoryList, this@PlaceOrderActivity)
+                        categoriesRV.adapter = categoryListAdapter
+
                         isFirstTimeData = false
                     }
 
@@ -173,11 +182,10 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
 
-                    if (shared!!.getBoolean("typing_animation", false)) {
+                    /*if (shared!!.getBoolean("typing_animation", false)) {
                         o2ET.isEnabled = false
-                        orderBT.isClickable = false
                         loadTypingAnimation()
-                    }
+                    }*/
 
                     placeOrderAdapter!!.notifyDataSetChanged()
                     isLoading = false
@@ -235,7 +243,7 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
 
-        setOnScrollListener(recyclerView)
+//        setOnScrollListener(recyclerView)
 
         var animateFirstTime = true
         searchET.addTextChangedListener(object : TextWatcher {
@@ -246,7 +254,7 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (searchET.text.toString().trim().length > 0) {
+                if (searchET.text.toString().trim().isNotEmpty()) {
                     closeIB.visibility = View.VISIBLE
                     if (animateFirstTime) {
                         val slideIn: Animation =
@@ -262,12 +270,12 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
                     animateFirstTime = true
                 }
 
-                if (categoryList.size > 0) {
+                /*if (categoryList.size > 0) {
                     categoryNameTV.visibility = View.VISIBLE
                     categoryNameTV.text = categoryList[0]
                 } else {
                     categoryNameTV.visibility = View.GONE
-                }
+                }*/
 
                 if (searchET.text.toString().trim().length > 2) {
                     productsList.clear()
@@ -293,10 +301,12 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
         })
 
         backIB.setOnClickListener(this)
-        imageIB.setOnClickListener(this)
+        textOrderLayout.setOnClickListener(this)
         orderBT.setOnClickListener(this)
-        categoryNameTV.setOnClickListener(this)
+        categoryViewMore.setOnClickListener(this)
+//        searchIB.setOnClickListener(this)
         closeIB.setOnClickListener(this)
+        moreItemTV.setOnClickListener(this)
     }
 
     @SuppressLint("MissingSuperCall")
@@ -314,21 +324,35 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
             R.id.backIB -> {
                 backButtonClick()
             }
-            R.id.imageIB -> {
-                dispatchTakePictureIntent()
+            R.id.textOrderLayout -> {
+                showOpenOrderDialog()
             }
-            R.id.categoryNameTV -> {
+            R.id.categoryViewMore -> {
                 categoryDialog = Dialog(this)
                 categoryDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 categoryDialog.setContentView(R.layout.category_dialog)
 
+                val cat = mutableListOf<MajorCategory>()
+                for (i in categoryList) {
+                    if (i.isProductExists) {
+                        cat.add(i)
+                    }
+                }
+
+                val closeIB = categoryDialog.findViewById(R.id.closeIB) as ImageButton
                 val categoriesRV = categoryDialog.findViewById(R.id.categoriesRV) as RecyclerView
-                categoriesRV.layoutManager = LinearLayoutManager(this)
-                val selectCategoryAdapter = SelectCategoriesAdapter(this, categoryList, this)
+                categoriesRV.layoutManager = GridLayoutManager(this, 3)
+                val selectCategoryAdapter = SelectCategoriesAdapter(this, cat, this)
                 categoriesRV.adapter = selectCategoryAdapter
+
+
+                closeIB.setOnClickListener {
+                    categoryDialog.dismiss()
+                }
 
                 categoryDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 categoryDialog.setCanceledOnTouchOutside(false)
+                categoryDialog.setCancelable(false)
                 categoryDialog.show()
                 val window = categoryDialog.window!!
                 window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -367,14 +391,17 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
                     if (!itemShort) {
                         if (itemAvailable || itemListAvailable) {
                             if (totalPrice >= 100f) {
-                                /*val intent = Intent(this, OrderConfirmationActivity::class.java)
+                                val intent = Intent(this, OrderConfirmationActivity::class.java)
                                 intent.putExtra("supplier_id", supplier_id)
                                 intent.putExtra("shop_name", shopName)
                                 intent.putExtra("o2", o2ET.text.toString().trim())
                                 intent.putExtra("productsList", Gson().toJson(orderedProductsList))
-                                startActivity(intent)*/
+//                                intent.putExtra("selectedAddressID", selectedAddressID)
+//                                intent.putExtra("selectedAddress", Gson().toJson(addresses[selectedAddressPosition]))
+                                intent.putExtra("supplierDiscount", supplierDiscount)
+                                startActivity(intent)
 
-                                showAddressSelectionDialog()
+//                                showAddressSelectionDialog()
 
                                 /*val imageViewPair = Pair.create<View?, String?>(totalPriceTV, "totalPrice")
                                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, imageViewPair)
@@ -392,23 +419,40 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
 
             }
 
+            /*R.id.searchIB -> {
+                titleTV.visibility = View.GONE
+                searchET.visibility = View.VISIBLE
+                searchIB.visibility = View.GONE
+                closeIB.visibility = View.VISIBLE
+            }*/
+
             R.id.closeIB -> {
-                searchET.setText("")
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(searchET.windowToken, 0)
+                if (searchET.text.toString().isNotEmpty()) {
+                    searchET.setText("")
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(searchET.windowToken, 0)
 
-                productsList.clear()
-                mainProductsList.clear()
-                currentPage = 0
+                    productsList.clear()
+                    mainProductsList.clear()
+                    currentPage = 0
 
-                loadDataFor = "main"
+                    loadDataFor = "main"
 
-                progressLayout.visibility = View.VISIBLE
-                loadMainAPI()
+                    progressLayout.visibility = View.VISIBLE
+                    loadMainAPI()
 
-                val slideOut: Animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_right)
-                closeIB.startAnimation(slideOut)
-                closeIB.visibility = View.GONE
+                    val slideOut: Animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_right)
+                    closeIB.startAnimation(slideOut)
+                }
+            }
+            R.id.moreItemTV -> {
+                val intent = Intent(this, ProductListingActivity::class.java)
+                intent.putExtra("supplier_id", supplier_id)
+                intent.putExtra("shop_name", shopName)
+                intent.putExtra("category", "")
+                intent.putExtra("from", "main")
+                intent.putExtra("orderedProductsList", Gson().toJson(orderedProductsList))
+                startActivity(intent)
             }
         }
     }
@@ -457,12 +501,13 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
     private val plusReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             var inOrderProductsList = false
-            for (i in mainProductsList) {
+            /*for (i in mainProductsList) {
                 if (i.product_id == intent.getStringExtra("product_id")) {
                     for (j in orderedProductsList) {
                         if (j.product_id == i.product_id) {
                             inOrderProductsList = true
-                            j.qty = intent.getStringExtra("qty")
+                            j.qty = intent.getStringExtra("qty")!!
+                            i.qty = intent.getStringExtra("qty")!!
                         }
                     }
 
@@ -470,15 +515,34 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
                         orderedProductsList.add(i)
                     }
                 }
+            }*/
+            val product = intent.getStringExtra("data")!!
+            val pro = Gson().fromJson<Products>(product, object : TypeToken<Products>() {}.type)
+            Log.e(TAG, "Product Data Qty : ${pro.qty}")
+
+            if (pro.qty == "1") {
+                orderedProductsList.add(pro)
+            } else {
+                for (i in orderedProductsList) {
+                    if (i.product_id == pro.product_id) {
+                        i.qty = pro.qty
+                    }
+                }
             }
+
+
             totalPrice += intent.getFloatExtra("value", 0f)
             totalPriceTV.text = doubleToStringNoDecimal(totalPrice.toDouble())
+
+            if (intent.getStringExtra("from") == "productListingActivity") {
+                placeOrderAdapter!!.notifyDataSetChanged()
+            }
         }
     }
 
     private val minusReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.getStringExtra("qty") == "0") {
+            /*if (intent.getStringExtra("qty") == "0") {
                 for (i in mainProductsList) {
                     if (i.product_id == intent.getStringExtra("product_id")) {
                         orderedProductsList.remove(i)
@@ -489,14 +553,37 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
                     if (i.product_id == intent.getStringExtra("product_id")) {
                         for (j in orderedProductsList) {
                             if (j.product_id == i.product_id) {
-                                j.qty = intent.getStringExtra("qty")
+                                j.qty = intent.getStringExtra("qty")!!
                             }
                         }
                     }
                 }
+            }*/
+
+            val product = intent.getStringExtra("data")!!
+            val pro = Gson().fromJson<Products>(product, object : TypeToken<Products>() {}.type)
+            Log.e(TAG, "Product Data Qty : ${pro.qty}")
+
+            if (pro.qty == "0") {
+                for (i in orderedProductsList) {
+                    if (i.product_id == pro.product_id) {
+                        i.qty = "0"
+                    }
+                }
+                orderedProductsList.remove(pro)
+            } else {
+                for (i in orderedProductsList) {
+                    if (i.product_id == pro.product_id) {
+                        i.qty = pro.qty
+                    }
+                }
             }
+
             totalPrice -= intent.getFloatExtra("value", 0f)
             totalPriceTV.text = doubleToStringNoDecimal(totalPrice.toDouble())
+            if (intent.getStringExtra("from") == "productListingActivity") {
+                placeOrderAdapter!!.notifyDataSetChanged()
+            }
         }
     }
 
@@ -507,35 +594,22 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun receiveClickListener(category: String) {
-        categoryDialog.dismiss()
-        categoryNameTV.text = category
-
-        if (categoryList.size > 1) {
-            if (category != "All") {
-                productsList.clear()
-                mainProductsList.clear()
-                currentPage = 0
-
-                loadDataFor = "category"
-
-                progressLayout.visibility = View.VISIBLE
-                loadCategoryAPI(category)
-            } else {
-                productsList.clear()
-                mainProductsList.clear()
-                currentPage = 0
-
-                loadDataFor = "main"
-
-                progressLayout.visibility = View.VISIBLE
-                loadMainAPI()
-            }
+        if (::categoryDialog.isInitialized) {
+            categoryDialog.dismiss()
         }
+        val intent = Intent(this, ProductListingActivity::class.java)
+        intent.putExtra("supplier_id", supplier_id)
+        intent.putExtra("shop_name", shopName)
+        intent.putExtra("category", category)
+        intent.putExtra("from", "category")
+        intent.putExtra("orderedProductsList", Gson().toJson(orderedProductsList))
+        startActivity(intent)
     }
+
 
     private fun doubleToStringNoDecimal(d: Double): String? {
         val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
-        formatter.applyPattern("#,##,###.##")
+        formatter.applyPattern("#,##,###.00")
         return formatter.format(d)
     }
 
@@ -586,12 +660,16 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
     private fun loadCategoryData() {
         recyclerView.layoutManager = LinearLayoutManager(this@PlaceOrderActivity)
         placeOrderAdapter =
-            PlaceOrderAdapter(this@PlaceOrderActivity, mainProductsList, this@PlaceOrderActivity, orderedProductsList)
+            PlaceOrderAdapter(
+                this@PlaceOrderActivity,
+                mainProductsList,
+                this@PlaceOrderActivity,
+                orderedProductsList,
+                "placeOrderActivity"
+            )
         recyclerView.adapter = placeOrderAdapter
     }
 
-    //    private val typeText = "Apple 1KG ( Good Quality, Bigger Size ) \n\nஎலும்பிச்சை பழம் - 10 ( நன்கு பழுத்தது )"
-//    private val typeText = "Type anything to Place your Order \n\nஇங்கு தேவையான பொருட்களை உள்ளீடு செய்யவும்"
     private val typeText = "Type here to request Order by plain text"
     private var pos = 0
     private fun loadTypingAnimation() {
@@ -667,7 +745,7 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
                             Log.i(TAG, "onScrolled: REQUESTING FOR PAGE $currentPage")
                             when (loadDataFor) {
                                 "main" -> loadMainAPI()
-                                "category" -> loadCategoryAPI(categoryNameTV.text.toString().trim())
+//                                "category" -> loadCategoryAPI(categoryNameTV.text.toString().trim())
                                 "search" -> loadSearchAPI()
                             }
                         }
@@ -712,15 +790,18 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         continueBT.setOnClickListener {
-            /*val intent = Intent(this, OrderConfirmationActivity::class.java)
+            //            showAddressSelectionDialog()
+            orderValueDialog.dismiss()
+
+            val intent = Intent(this, OrderConfirmationActivity::class.java)
             intent.putExtra("supplier_id", supplier_id)
             intent.putExtra("shop_name", shopName)
             intent.putExtra("o2", o2ET.text.toString().trim())
             intent.putExtra("productsList", Gson().toJson(orderedProductsList))
-            intent.putExtra("selectedAddressID", "")
-            startActivity(intent)*/
-            showAddressSelectionDialog()
-            orderValueDialog.dismiss()
+//            intent.putExtra("selectedAddressID", selectedAddressID)
+//            intent.putExtra("selectedAddress", Gson().toJson(addresses[selectedAddressPosition]))
+            intent.putExtra("supplierDiscount", supplierDiscount)
+            startActivity(intent)
         }
 
         orderValueDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -771,8 +852,9 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
                 intent.putExtra("shop_name", shopName)
                 intent.putExtra("o2", o2ET.text.toString().trim())
                 intent.putExtra("productsList", Gson().toJson(orderedProductsList))
-                intent.putExtra("selectedAddressID", selectedAddressID)
-                intent.putExtra("selectedAddress", Gson().toJson(addresses[selectedAddressPosition]))
+//                intent.putExtra("selectedAddressID", selectedAddressID)
+//                intent.putExtra("selectedAddress", Gson().toJson(addresses[selectedAddressPosition]))
+                intent.putExtra("supplierDiscount", supplierDiscount)
                 startActivity(intent)
             } else {
                 Toast.makeText(this@PlaceOrderActivity, "Please Select Address!", Toast.LENGTH_SHORT).show()
@@ -797,10 +879,46 @@ class PlaceOrderActivity : AppCompatActivity(), View.OnClickListener {
 
     private val selectedAddress = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            Log.e(TAG, "Address List Size  : " + addresses.size)
+            Log.e(TAG, "Address Position  : " + intent.getIntExtra("position", 0))
             selectedAddressPosition = intent.getIntExtra("position", 0)
             selectedAddressID = addresses[intent.getIntExtra("position", 0)].id
         }
     }
 
 
+    private fun showOpenOrderDialog() {
+        val openOrderDialog = Dialog(this)
+        openOrderDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        openOrderDialog.setContentView(R.layout.open_order_dialog)
+
+        val closeIB = openOrderDialog.findViewById(R.id.closeIB) as ImageButton
+        val openOrderET = openOrderDialog.findViewById(R.id.openOrderET) as EditText
+        val doneBT = openOrderDialog.findViewById(R.id.doneBT) as Button
+
+        if (o2ET.text.toString().isNotEmpty()) {
+            openOrderET.setText(o2ET.text.toString().trim())
+        }
+
+        closeIB.setOnClickListener {
+            openOrderDialog.dismiss()
+        }
+
+        doneBT.setOnClickListener {
+            if (openOrderET.text.toString().trim().length > 3) {
+                openOrderLayout.visibility = View.VISIBLE
+                o2ET.setText(openOrderET.text.toString().trim())
+                openOrderDialog.dismiss()
+            } else {
+                Toast.makeText(this, "Please Enter Valid Text Order!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        openOrderDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        openOrderDialog.setCanceledOnTouchOutside(false)
+        openOrderDialog.setCancelable(false)
+        openOrderDialog.show()
+        val window = openOrderDialog.window!!
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+    }
 }

@@ -1,6 +1,7 @@
 package `in`.inferon.msl.lemonor.view.adapter
 
 import `in`.inferon.msl.lemonor.R
+import `in`.inferon.msl.lemonor.model.Constants
 import `in`.inferon.msl.lemonor.model.pojo.SuppliersForCustomer
 import `in`.inferon.msl.lemonor.view.activity.PlaceOrderActivity
 import `in`.inferon.msl.lemonor.view.activity.SupplierInfoActivity
@@ -19,7 +20,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.supplier_for_customer_adapter.view.*
 import android.view.animation.AnimationUtils
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -56,6 +61,9 @@ class SuppliersForCustomerAdapter(
                 holder.positionOneLayout.visibility = View.GONE
                 val imageViewPagerAdapter = ImageViewPagerAdapter(context, imagesList)
                 holder.viewPager.adapter = imageViewPagerAdapter
+                /*holder.viewPager.clipToPadding = false
+                holder.viewPager.setPadding(60, 0, 60, 0)
+                holder.viewPager.pageMargin = 20*/
                 holder.tabLayout.setupWithViewPager(holder.viewPager, true)
 
                 var page = 0
@@ -101,6 +109,19 @@ class SuppliersForCustomerAdapter(
             holder.preferredSupplierLayout.visibility = View.GONE
             holder.imageLayout.visibility = View.GONE
             holder.cardView.visibility = View.VISIBLE
+
+            val imgUrl = Constants.SHOP_IMG_BASE_URL + supplierForCustomerList[position - 2].user_id + ".jpg"
+            Log.e("TAG", "Image URL : $imgUrl")
+            Picasso.get().load(imgUrl).into(holder.shopImageIV, object : Callback {
+                override fun onSuccess() {
+                }
+
+                override fun onError(e: Exception?) {
+                    holder.shopLogoIV.visibility = View.VISIBLE
+//                    holder.shopImageIV.visibility = View.GONE
+                }
+
+            })
 
             holder.shopNameTV.text = supplierForCustomerList[position - 2].shop_name
             if (supplierForCustomerList[position - 2].supplier_rating != null && supplierForCustomerList[position - 2].supplier_rating != "0") {
@@ -164,6 +185,13 @@ class SuppliersForCustomerAdapter(
                 context.startActivity(intent)
             }
 
+            holder.shopImageIV.setOnClickListener {
+                val intent = Intent(context, SupplierInfoActivity::class.java)
+                intent.putExtra("supplier_id", supplierForCustomerList[position - 2].user_id)
+                intent.putExtra("from", "supplier_list")
+                context.startActivity(intent)
+            }
+
 //        setAnimation(holder.cardView, position-2)
         }
     }
@@ -200,5 +228,6 @@ class SuppliersForCustomerAdapter(
         val ratingTV = view.ratingTV!!
         val overRatingLayout = view.overRatingLayout!!
         val overRatingTV = view.overRatingTV!!
+        val shopImageIV = view.shopImageIV!!
     }
 }

@@ -3,6 +3,9 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:clickable="false"
+              android:focusable="false"
+              android:focusableInTouchMode="false"
               android:padding="@dimen/pad_5">
     <LinearLayout
             android:id="@+id/itemLayout"

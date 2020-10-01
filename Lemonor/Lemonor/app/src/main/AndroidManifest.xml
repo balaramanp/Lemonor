@@ -16,6 +16,8 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
+        <activity android:name=".view.activity.ProductListingActivity">
+        </activity>
         <activity android:name=".view.activity.OrderSummaryActivity">
         </activity>
         <activity
@@ -32,7 +34,6 @@
                 android:name=".view.activity.SafetyMeasureActivity"
                 android:screenOrientation="portrait">
         </activity>
-
         <activity
                 android:name=".view.activity.SearchUpdatePriceActivity"
                 android:screenOrientation="portrait"
@@ -210,6 +211,21 @@
         <meta-data
                 android:name="com.razorpay.ApiKey"
                 android:value="rzp_test_RYT6LI92CIjnHM"/>
+        <meta-data
+                android:name="com.google.android.gms.ads.APPLICATION_ID"
+                android:value="ca-app-pub-4481048734285532~1172872520"/>
+        <meta-data
+                android:name="com.facebook.sdk.ApplicationId"
+                android:value="@string/facebook_app_id"/>
+        <meta-data
+                android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
+                android:value="false"/>
+        <meta-data
+                android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
+                android:value="false"/>
+        <meta-data
+                android:name="com.facebook.sdk.AutoInitEnabled"
+                android:value="false"/>
     </application>
 
 </manifest>

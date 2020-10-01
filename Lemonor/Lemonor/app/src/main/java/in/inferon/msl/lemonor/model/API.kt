@@ -250,4 +250,8 @@ interface API {
     @FormUrlEncoded
     @POST("customer/get_supplier_id_for_staff")
     fun getSupplierIdForStaff(@Field("data") data: String): Call<ResponseBody>
+
+    @FormUrlEncoded
+    @POST("customer/get_slot_for_order_delivery")
+    fun getSlotForOrderDelivery(@Field("data") data: String): Call<ResponseBody>
 }

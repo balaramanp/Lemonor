@@ -3,6 +3,7 @@ package `in`.inferon.msl.lemonor.view.adapter
 import `in`.inferon.msl.lemonor.R
 import `in`.inferon.msl.lemonor.model.Utils
 import `in`.inferon.msl.lemonor.model.pojo.Order
+import `in`.inferon.msl.lemonor.model.pojo.OrderList
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
@@ -33,7 +34,7 @@ import java.util.*
 
 class ClientOrdersAdapter(
     private val context: Context,
-    private val list: MutableList<MutableList<Order>>,
+    private val list: MutableList<OrderList>,
     private val activity: AppCompatActivity
 ) : RecyclerView.Adapter<ClientOrdersAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -47,15 +48,15 @@ class ClientOrdersAdapter(
     @SuppressLint("SimpleDateFormat", "SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val order = list[position]
-        holder.tokenTV.text = order[0].token_number
-        holder.shopNameTV.text = order[0].shop_name
-        holder.mobileNoTV.text = order[0].shop_mobile_number
-        holder.orderDateTV.text = order[0].formatted_date + "   " + order[0].formatted_time
+        holder.tokenTV.text = order.productsList[0].token_number
+        holder.shopNameTV.text = order.productsList[0].shop_name
+        holder.mobileNoTV.text = order.productsList[0].shop_mobile_number
+        holder.orderDateTV.text = order.productsList[0].formatted_date + "   " + order.productsList[0].formatted_time
 
         var totPrice = 0f
         var itemCount = 0
         var orderCompleted = false
-        for (i in order) {
+        for (i in order.productsList) {
             if (i.order_status != "user_cancelled" && i.order_status != "supplier_rejected") {
                 totPrice += i.price.toFloat()
                 itemCount += 1
@@ -67,7 +68,7 @@ class ClientOrdersAdapter(
             }
         }
 
-        holder.totalPriceTV.text = context.getString(R.string.Rs) + " " + doubleToStringNoDecimal(totPrice.toDouble())
+        holder.totalPriceTV.text = context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(totPrice.toDouble())
         holder.itemCountTV.text = itemCount.toString()
         if (itemCount > 1) {
             holder.itemTV.text = "Items"
@@ -75,7 +76,25 @@ class ClientOrdersAdapter(
             holder.itemTV.text = "Item"
         }
 
-        if (orderCompleted && order[0].is_rated == "0") {
+        Log.e("TAG", "Live Order Supplier Discount : " + order.supplier_discount)
+        if (order.supplier_discount != "" && order.supplier_discount != "0") {
+            holder.discountLayout.visibility = View.VISIBLE
+            holder.discountTotalLayout.visibility = View.VISIBLE
+            holder.discountTxtTV.text = "Extra Discount ${order.supplier_discount}%"
+
+            val pre = totPrice / 100
+            val percentAmount: Float = (pre * order.supplier_discount.toFloat())
+            val ourPrice: Float = (totPrice - percentAmount)
+            holder.discountValueTV.text = "- " + doubleToStringTwoDecimal(percentAmount.toDouble())
+
+            holder.afterDiscountValueTV.text =
+                context.getString(R.string.Rs) + " " + doubleToStringTwoDecimal(ourPrice.toDouble())
+        } else {
+            holder.discountLayout.visibility = View.GONE
+            holder.discountTotalLayout.visibility = View.GONE
+        }
+
+        if (orderCompleted && order.productsList[0].is_rated == "0") {
             holder.ratingLayout.visibility = View.VISIBLE
         } else {
             holder.ratingLayout.visibility = View.GONE
@@ -83,7 +102,7 @@ class ClientOrdersAdapter(
 
 
         holder.recyclerView.layoutManager = LinearLayoutManager(context)
-        val ordersItemAdapter = OrdersItemAdapter(context, order, activity)
+        val ordersItemAdapter = OrdersItemAdapter(context, order.productsList, activity)
         holder.recyclerView.adapter = ordersItemAdapter
         holder.recyclerView.setHasFixedSize(true)
 
@@ -97,8 +116,8 @@ class ClientOrdersAdapter(
             val diaCancelBT = dialog.findViewById(R.id.diaCancelBT) as Button
             val diaOKBT = dialog.findViewById(R.id.diaOKBT) as Button
 
-            diaUserNameTV.text = order[0].shop_name
-            diaMobileNoTV.text = order[0].shop_mobile_number
+            diaUserNameTV.text = order.productsList[0].shop_name
+            diaMobileNoTV.text = order.productsList[0].shop_mobile_number
 
             diaCancelBT.setOnClickListener {
                 dialog.dismiss()
@@ -106,7 +125,7 @@ class ClientOrdersAdapter(
 
             diaOKBT.setOnClickListener {
                 val callIntent = Intent(Intent.ACTION_DIAL)
-                callIntent.data = Uri.parse("tel:" + order[0].shop_mobile_number)
+                callIntent.data = Uri.parse("tel:" + order.productsList[0].shop_mobile_number)
                 context.startActivity(callIntent)
             }
 
@@ -140,9 +159,9 @@ class ClientOrdersAdapter(
                     loadingLayout.visibility = View.VISIBLE
                     buttonLayout.visibility = View.GONE
                     val obj = JSONObject()
-                    obj.put("token_number", order[0].token_number)
-                    obj.put("added_datetime", order[0].added_datetime)
-                    obj.put("user_id", order[0].user_id)
+                    obj.put("token_number", order.productsList[0].token_number)
+                    obj.put("added_datetime", order.productsList[0].added_datetime)
+                    obj.put("user_id", order.productsList[0].user_id)
                     obj.put("supplier_rating", storeRatingBar.rating.toString())
                     obj.put("product_rating", productRatingBar.rating.toString())
                     obj.put("delivery_boy_rating", deliveryBoyRatingBar.rating.toString())
@@ -160,7 +179,7 @@ class ClientOrdersAdapter(
                                 Log.e("TAG", "Update Bill Rating Response : $responseString")
                                 val jsonObject = JSONObject(responseString)
                                 if (jsonObject.getString("status") == "ok") {
-                                    order[0].is_rated = "1"
+                                    order.productsList[0].is_rated = "1"
                                     updateRating(position)
                                     dialog.dismiss()
                                     Toast.makeText(context, "Thank you for your feedback!", Toast.LENGTH_SHORT).show()
@@ -194,11 +213,22 @@ class ClientOrdersAdapter(
         val itemTV = view.itemTV!!
         val totalPriceTV = view.totalPriceTV!!
         val ratingLayout = view.ratingLayout!!
+        val discountLayout = view.discountLayout!!
+        val discountTxtTV = view.discountTxtTV!!
+        val discountValueTV = view.discountValueTV!!
+        val discountTotalLayout = view.discountTotalLayout!!
+        val afterDiscountValueTV = view.afterDiscountValueTV!!
     }
 
     private fun doubleToStringNoDecimal(d: Double): String? {
         val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
         formatter.applyPattern("#,##,###.##")
+        return formatter.format(d)
+    }
+
+    private fun doubleToStringTwoDecimal(d: Double): String? {
+        val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
+        formatter.applyPattern("#,##,###.00")
         return formatter.format(d)
     }
 
